@@ -1,0 +1,94 @@
+<div class="my-5 row justify-content-center mx-3">
+    <h1 class="text-center">회원가입</h1>
+    <form name="frm" class="col-md-6 card p-3" method="post" action="/users/insert">
+        <div class="input-group mb-3">
+            <span class="input-group-text">아디디</span>
+            <input name="uid" class="form-control">
+            <button id="check" class="btn btn-primary" type="button">중복체크</button>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">비밀번호</span>
+            <input name="upass" class="form-control" type="password">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">이름</span>
+            <input name="uname" class="form-control">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">전화번호</span>
+            <input name="phone" class="form-control">
+        </div>
+        <div class="input-group mb-1">
+            <span class="input-group-text">주소</span>
+            <input name="address1" class="form-control">
+            <button class="btn btn-primary">주소검색</button>
+        </div>
+        <div>
+            <input name="address2" class="form-control" placeholder="상세주소">
+        </div>
+        <div class="text-center my-3">
+            <button class="btn btn-primary">등록</button>
+            <button class="btn btn-secondary" type="reset">취소</button>
+        </div>
+    </form>
+</div>
+<script>
+    let check=false;
+
+    //폼이 서밋될때
+    $(frm).on("submit", function(e){
+        e.preventDefault();
+        //유효성체크
+        const uid=$(frm.uid).val();
+        const upass=$(frm.upass).val();
+        const uname=$(frm.uname).val();
+        const phone=$(frm.phone).val();
+        const address1=$(frm.address1).val();
+        const address2=$(frm.address2).val();
+        if(uid == "") {
+            alert("아이디를 입력하세요!");
+            $(frm.uid).focus();
+        }else if(check==false){
+            alert("아이디 중복체크를 하세요!");
+        }else if(upass==""){
+            alert("비밀번호를 입력하세요!");
+            $(frm.upass).focus();
+        }else{
+            if(confirm("회원을 등록하실래요?")){
+                frm.submit();
+            }
+        }
+    });
+
+    //아이디 중복체크
+    $("#check").on("click", function(){
+        const uid=$(frm.uid).val();
+        if(uid=="") {
+            alert("중복체크할 아이디를 입력하세요!");
+            $(frm.uid).focus();
+            return;
+        }
+        $.ajax({
+            type:"post",
+            url:'/users/login',
+            data:{uid:uid},
+            success:function(data){
+                if(data==0) {
+                    alert("사용가능한 아이디입니다.");
+                    check=true;
+                }else{
+                    alert("이미 사용중인 아이디입니다.");
+                    $(frm.uid).focus();
+                }
+            }
+        });
+    });
+
+    //아이디가 바뀌었을때
+    $(frm.uid).on("change", function(){
+        check=false;
+    });
+</script>
+
+
+

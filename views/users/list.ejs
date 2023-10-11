@@ -1,0 +1,27 @@
+<div class="my-5">
+    <h1 class="text-center">사용자목록</h1>
+    <div id="div_users"></div>
+</div>
+<script id="temp_users" type="x-handlebars-template">
+    <table class="table">
+        {{#each .}}
+            <tr>
+                <td>{{uid}}</td>
+                <td>{{uname}}</td>
+                <td>{{phone}}</td>
+                <td>{{address1}}</td>
+            </tr>    
+        {{/each}}
+    </table>    
+</script>
+
+<script>
+    $.ajax({
+        type:"get",
+        url:"/users/list.json",
+        success:function(data){
+            const temp=Handlebars.compile($("#temp_users").html());
+            $("#div_users").html(temp(data));
+        }
+    });
+</script>

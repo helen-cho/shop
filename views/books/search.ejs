@@ -1,0 +1,91 @@
+<div class="my-5">
+    <h1 class="text-center">도서검색</h1>
+    <div class="row justify-content-end">
+        <form name="frm" class="col-md-4 col-lg-3">
+            <div class="input-group">
+                <input name="query" class="form-control">
+                <button class="btn btn-primary">검색</button>
+            </div>
+        </form>
+    </div>
+    <div id="div_books"></div>
+    <div class="text-center">
+        <button id="prev" class="btn btn-primary">이전</button>
+        <span id="span_page" class="mx-3">1/10</span>
+        <button id="next" class="btn btn-primary">다음</button>
+    </div>
+</div>
+<!--도서검색템플릿-->
+<script id="temp_books" type="x-handlebars-template">
+    <table class="table">
+        {{#each documents}}
+        <tr>
+            <td><img src="{{isImage thumbnail}}" width="50"></td>
+            <td>{{title}}</td>
+            <td>{{fmtPrice price}}</td>
+            <td>{{authors}}</td>
+        </tr>    
+        {{/each}}
+    </table>    
+</script>
+<script>
+    Handlebars.registerHelper("isImage", function(image){
+        if(image){
+            return image;
+        }else {
+            return "http://via.placeholder.com/170x230";
+        }
+    });
+    Handlebars.registerHelper("fmtPrice", function(price){
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"
+    });
+</script>
+<script>
+    let query="자바";
+    let page=1;
+    getBooks();
+
+    $("#next").on("click", function(){
+        page++;
+        getBooks();
+    });
+
+    $("#prev").on("click", function(){
+        page--;
+        getBooks();
+    });
+
+    $(frm).on("submit", function(e){
+        e.preventDefault();
+        query=$(frm.query).val();
+        page=1;
+        if(query==""){
+            alert("검색어를 입력하세요!");
+            $(frm.query).focus();
+        }else{
+            getBooks();
+        }
+    });
+
+    function getBooks(){
+        $.ajax({
+            type:"get",
+            url:"https://dapi.kakao.com/v3/search/book?target=title",
+            headers:{"Authorization":"KakaoAK d98342bfb3d10bd8a8d18f10982fe1c8"},
+            data:{query:query, page:page, size:5},
+            success:function(data){
+                console.log(data);
+                const temp=Handlebars.compile($("#temp_books").html());
+                $("#div_books").html(temp(data));
+                const last=Math.ceil(data.meta.pageable_count/5);
+                $("#span_page").html(`${page}/${last}`);
+                //페이지가 1페이지인 경우
+                if(page==1) $("#prev").attr("disabled", true);
+                else $("#prev").attr("disabled", false);
+                //페이지가 마지막인 경우
+                if(data.meta.is_end) $("#next").attr("disabled", true);
+                else $("#next").attr("disabled", false);
+            }
+        });
+    }
+</script>
