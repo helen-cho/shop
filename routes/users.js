@@ -52,6 +52,10 @@ router.post('/insert', function(req, res){
     const address1=req.body.address1;
     const address2=req.body.address2;
     console.log(uid,upass,uname,phone,address1,address2);
+    const sql="insert into users(uid,upass,uname,phone,address1,address2) values(?,?,?,?,?,?)";
+    db.get().query(sql,[uid,upass,uname,phone,address1,address2], function(err, rows){
+        res.redirect('/users/login')
+    });
 });
 
 module.exports = router;
