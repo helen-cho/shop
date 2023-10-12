@@ -38,9 +38,9 @@ router.post('/login', function(req, res){
     });
 });
 
-//회원가입 페이지 이동
+//회원가입페이지 이동
 router.get('/insert', function(req, res){
-    res.render('index', {title:'회원가입', pageName:'users/insert.ejs'});
+    res.render('index', {title:'회원가입', pageName:'users/insert.ejs'})
 });
 
 //회원가입
@@ -48,19 +48,34 @@ router.post('/insert', function(req, res){
     const uid=req.body.uid;
     const upass=req.body.upass;
     const uname=req.body.uname;
-    const phone=req.body.phone;
     const address1=req.body.address1;
     const address2=req.body.address2;
-    console.log(uid,upass,uname,phone,address1,address2);
-    const sql="insert into users(uid,upass,uname,phone,address1,address2) values(?,?,?,?,?,?)";
+    const phone=req.body.phone;
+    console.log(uid, upass, uname, address1, address2, phone);
+    const sql='insert into users(uid,upass,uname,phone,address1,address2) values(?,?,?,?,?,?)';
     db.get().query(sql,[uid,upass,uname,phone,address1,address2], function(err, rows){
-        res.redirect('/users/login')
+        res.redirect('/users/login');
+    });
+});
+
+//마이페이지 이동
+router.get('/mypage', function(req, res){
+    const uid=req.query.uid;
+    const sql='select * from users where uid=?';
+    db.get().query(sql, [uid], function(err, rows){
+        console.log('..........', rows[0]);
+        res.render('index', {title:'마이페이지', pageName:'users/mypage.ejs', user:rows[0]});
+    });
+});
+
+//수정페이지 이동
+router.get('/update', function(req, res){
+    const uid=req.query.uid;
+    const sql='select * from users where uid=?';
+    db.get().query(sql, [uid], function(err, rows){
+        console.log('..........', rows[0]);
+        res.render('index', {title:'정보수정', pageName:'users/update.ejs', user:rows[0]});
     });
 });
 
 module.exports = router;
-
-
-
-
-

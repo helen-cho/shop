@@ -1,0 +1,50 @@
+<div class="my-5 row justify-content-center">
+    <h1 class="text-center">정보수정</h1>
+    <form name="frm" class="col-md-6 card p-3" method="post">
+        <div class="input-group mb-3">
+            <span class="input-group-text">이름</span>
+            <input name="uname" class="form-control" value="<%=user.uname%>">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">전화번호</span>
+            <input name="phone" class="form-control" value="<%=user.phone%>">
+        </div>
+        <div class="input-group mb-1">
+            <span class="input-group-text">주소</span>
+            <input name="address1" class="form-control" value="<%=user.address1%>">
+            <button id="search" class="btn btn-primary" type="button">주소검색</button>
+        </div>
+        <div>
+            <input name="address2" class="form-control" placeholder="상세주소" value="<%=user.address2%>">
+        </div>
+        <div class="text-center my-3">
+            <button class="btn btn-primary">수정</button>
+            <button class="btn btn-secondary" type="reset">취소</button>
+        </div>
+    </form>
+</div>
+<script>
+    //수정버튼을 눌렀을때
+    $(frm).on("submit", function(e){
+        e.preventDefault();
+        const uname=$(frm.uname).val();
+        const phone=$(frm.phone).val();
+        const address1=$(frm.address1).val();
+        const address2=$(frm.address2).val();
+    });
+
+
+    //주소검색버튼을 클릭한 경우
+    $("#search").on("click", function(){
+        new daum.Postcode({
+            oncomplete:function(data){
+                console.log(data);
+                if(data.buildingName != ""){
+                    $(frm.address1).val(data.address + " " + data.buildingName);
+                }else{
+                    $(frm.address1).val(data.address);
+                }
+            }
+        }).open();
+    });
+</script>
