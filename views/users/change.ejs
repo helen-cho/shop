@@ -1,7 +1,6 @@
 <div class="my-5 row justify-content-center mx-3">
     <h1 class="text-center mb-5">비밀번호변경</h1>
     <form name="frm" class="card p-3 col-md-6" method="post">
-        <input name="uid" type="hidden">
         <input name="upass" class="form-control mb-3" placeholder="현재비밀번호" type="password">
         <input name="npass" class="form-control mb-1" placeholder="새비밀번호" type="password">
         <input name="cpass" class="form-control mb-3" placeholder="새비밀번호확인" type="password">
@@ -9,7 +8,6 @@
     </form>
 </div>
 <script>
-    $(frm.uid).val(sessionStorage.getItem("uid"));
     $(frm).on("submit", function(e){
         e.preventDefault();
         const upass=$(frm.upass).val();
@@ -36,7 +34,18 @@
                     if(data==2) {
                         alert("비밀번호가 일치하지 않습니다.");
                     }else {
-                        if(confirm("새로운 비밀번호로 변경하실래요?")) frm.submit();
+                        if(confirm("새로운 비밀번호로 변경하실래요?")) {
+                            $.ajax({
+                                type:"post",
+                                url:"/users/change",
+                                data:{uid:sessionStorage.getItem("uid"), npass:npass},
+                                success:function(){
+                                    alert("비밀번호가 변경되었습니다.");
+                                    sessionStorage.clear();
+                                    location.href="/users/login";
+                                }
+                            });
+                        }
                     }
                 }
             });
