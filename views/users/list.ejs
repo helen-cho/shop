@@ -1,11 +1,16 @@
 <div class="my-5">
-    <h1 class="text-center">사용자목록</h1>
+    <h1 class="text-center mb-5">사용자목록</h1>
     <div id="div_users"></div>
 </div>
 <script id="temp_users" type="x-handlebars-template">
     <table class="table">
         {{#each .}}
             <tr>
+                <td>
+                    <a href="/users/mypage?uid={{uid}}">
+                        <img src="{{isImage photo}}" width=50 class="photo">
+                    </a>
+                </td>
                 <td>{{uid}}</td>
                 <td>{{uname}}</td>
                 <td>{{phone}}</td>
@@ -14,7 +19,12 @@
         {{/each}}
     </table>    
 </script>
-
+<script>
+    Handlebars.registerHelper("isImage", function(photo){
+        if(photo) return "/upload/photo/" + photo;
+        else return "http://via.placeholder.com/100x100";
+    });
+</script>
 <script>
     $.ajax({
         type:"get",
