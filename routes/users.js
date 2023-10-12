@@ -1,6 +1,20 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
+var multer= require('multer');
+
+//업로드함수
+var upload = multer({
+    storage:multer.diskStorage({
+        destination:(req, file, done)=>{
+            done(null, './public/upload/photo')
+        },
+        filename:(req, file, done)=>{
+            var fileName=Date.now() + ".jpg";
+            done(null, fileName);
+        }
+    })
+});
 
 /* 사용자목록 페이지 */
 router.get('/', function(req, res, next) {
@@ -63,7 +77,7 @@ router.get('/mypage', function(req, res){
     const uid=req.query.uid;
     const sql='select * from users where uid=?';
     db.get().query(sql, [uid], function(err, rows){
-        console.log('..........', rows[0]);
+        //console.log('..........', rows[0]);
         res.render('index', {title:'마이페이지', pageName:'users/mypage.ejs', user:rows[0]});
     });
 });
@@ -73,23 +87,24 @@ router.get('/update', function(req, res){
     const uid=req.query.uid;
     const sql='select * from users where uid=?';
     db.get().query(sql, [uid], function(err, rows){
-        console.log('..........', rows[0]);
+        //console.log('..........', rows[0]);
         res.render('index', {title:'정보수정', pageName:'users/update.ejs', user:rows[0]});
     });
 });
 
 //정보수정
-router.post('/update', function(req, res){
+router.post('/update',upload.single('file'), function(req, res){
     const uid=req.body.uid;
     const uname=req.body.uname;
     const phone=req.body.phone;
     const address1=req.body.address1;
     const address2=req.body.address2;
-    const photo = req.file.filename;
-    console.log('photo..........', photo);
-    console.log(uid, uname, phone, address1, address2);
-    const sql='update users set uname=?,phone=?,address1=?,address2=? where uid=?';
-    db.get().query(sql,[uname,phone,address1,address2,uid], function(err, rows){
+    let photo=req.body.photo;
+    if(req.file) photo = req.file.filename;
+    console.log('photo.....', photo);
+
+    const sql='update users set uname=?,phone=?,address1=?,address2=?, photo=? where uid=?';
+    db.get().query(sql,[uname,phone,address1,address2,photo,uid], function(err, rows){
         if(err) console.log(err);
         res.redirect('/users/mypage?uid=' + uid);
     });

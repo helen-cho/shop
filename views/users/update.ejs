@@ -1,6 +1,6 @@
 <div class="my-5 row justify-content-center">
     <h1 class="text-center">정보수정</h1>
-    <form name="frm" class="col-md-6 card p-3" method="post">
+    <form name="frm" class="col-md-6 card p-3" method="post" enctype="multipart/form-data">
         <div class="input-group mb-3">
             <span class="input-group-text">이름</span>
             <input name="uid" value="<%=user.uid%>" type="hidden">
@@ -18,6 +18,12 @@
         <div>
             <input name="address2" class="form-control" placeholder="상세주소" value="<%=user.address2%>">
         </div>
+        <hr>
+        <div>
+            <img src="http://via.placeholder.com/150x150" id="photo" width="200">
+            <input type="file" name="file" class="form-control mt-2">
+            <input name="photo" value="<%=user.photo%>" type="hidden">
+        </div>
         <div class="text-center my-3">
             <button class="btn btn-primary">수정</button>
             <button class="btn btn-secondary" type="reset">취소</button>
@@ -25,6 +31,18 @@
     </form>
 </div>
 <script>
+    const photo="<%=user.photo%>";
+    if(photo) {
+        $("#photo").attr("src", "/upload/photo/" + photo);
+    }else{
+        $("#photo").attr("src", "http://via.placeholder.com/100x100");
+    }
+
+    //파일 바뀐경우 미리보기
+    $(frm.file).on("change", function(e){
+        $("#photo").attr("src", URL.createObjectURL(e.target.files[0]));
+    });
+
     //수정버튼을 눌렀을때
     $(frm).on("submit", function(e){
         e.preventDefault();
