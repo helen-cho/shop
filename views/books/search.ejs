@@ -20,11 +20,12 @@
     <table class="table">
         {{#each documents}}
         <tr>
-            <td><img src="{{isImage thumbnail}}" width="50"></td>
+            <td><img src="{{isImage thumbnail}}" width="50" style="cursor:pointer;"></td>
             <td>{{title}}</td>
             <td>{{fmtPrice price}}</td>
             <td>{{authors}}</td>
         </tr>    
+        <%-include("modal.ejs")%>
         {{/each}}
     </table>    
 </script>
@@ -44,6 +45,11 @@
     let query="자바";
     let page=1;
     getBooks();
+
+    //이미지를 클릭한 경우
+    $("#div_books").on("click", "img", function(){
+        $("#modal").modal("show");
+    });
 
     $("#next").on("click", function(){
         page++;
