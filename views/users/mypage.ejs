@@ -5,11 +5,14 @@
     <h1 class="text-center mb-5">마이페이지</h1>
     <div class="col-md-8 card p-5">
         <div class="row">
-            <div class="col-md-2 mb-3">
+            <div class="col-md-3 mb-3">
                 <img class="photo" src="http://via.placeholder.com/100x100" width="100%" id="photo">
             </div>
             <div class="col">
-                <div class="mb-2">아이디: <%=user.uid%></div>
+                <div class="mb-2">
+                    아이디: <%=user.uid%>
+                    <a href="/users/change" class="btn btn-danger btn-sm ms-3" id="change">비밀번호변경</a>
+                </div>
                 <div class="mb-2">이름: <%=user.uname%></div>
                 <div class="mb-2">전화: <%=user.phone%></div>
                 <div class="mb-2">주소: <%=user.address1%> <%=user.address2%></div>
@@ -29,5 +32,8 @@
     }
 
     const uid="<%=user.uid%>";
-    if(sessionStorage.getItem("uid") != uid) $("#update").hide();
+    if(sessionStorage.getItem("uid") != uid) {
+        $("#update").hide();
+        $("#change").hide();
+    }
 </script>

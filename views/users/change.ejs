@@ -1,0 +1,45 @@
+<div class="my-5 row justify-content-center mx-3">
+    <h1 class="text-center mb-5">비밀번호변경</h1>
+    <form name="frm" class="card p-3 col-md-6" method="post">
+        <input name="uid" type="hidden">
+        <input name="upass" class="form-control mb-3" placeholder="현재비밀번호" type="password">
+        <input name="npass" class="form-control mb-1" placeholder="새비밀번호" type="password">
+        <input name="cpass" class="form-control mb-3" placeholder="새비밀번호확인" type="password">
+        <button class="btn btn-primary">확인</button>
+    </form>
+</div>
+<script>
+    $(frm.uid).val(sessionStorage.getItem("uid"));
+    $(frm).on("submit", function(e){
+        e.preventDefault();
+        const upass=$(frm.upass).val();
+        const npass=$(frm.npass).val();
+        const cpass=$(frm.cpass).val();
+        if(upass==""){
+            alert("현재비밀번호를 입력하세요!");
+            $(frm.upass).focus();
+        }else if(npass==""){
+            alert("새비밀번호를 입력하세요!");
+            $(frm.npass).focus();   
+        }else if(cpass==""){
+            alert("새비밀번호확인을 입력하세요!");
+            $(frm.cpass).focus();
+        }else if(cpass!=npass) {
+            alert("새비밀번호와 비밀번호확인이 일치하지 않습니다.");
+            $(frm.npass).focus();
+        }else{
+            $.ajax({
+                type:"post",
+                url:"/users/login",
+                data:{uid:sessionStorage.getItem('uid'), upass:upass},
+                success:function(data){
+                    if(data==2) {
+                        alert("비밀번호가 일치하지 않습니다.");
+                    }else {
+                        if(confirm("새로운 비밀번호로 변경하실래요?")) frm.submit();
+                    }
+                }
+            });
+        }
+    });
+</script>

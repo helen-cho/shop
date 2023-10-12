@@ -110,4 +110,9 @@ router.post('/update',upload.single('file'), function(req, res){
     });
 });
 
+//비밀번호변경 페이지 이동
+router.get('/change', function(req, res){
+    res.render('index', {title:'비밀번호변경', pageName:'users/change.ejs'});
+});
+
 module.exports = router;
