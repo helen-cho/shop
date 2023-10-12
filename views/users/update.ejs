@@ -3,6 +3,7 @@
     <form name="frm" class="col-md-6 card p-3" method="post">
         <div class="input-group mb-3">
             <span class="input-group-text">이름</span>
+            <input name="uid" value="<%=user.uid%>" type="hidden">
             <input name="uname" class="form-control" value="<%=user.uname%>">
         </div>
         <div class="input-group mb-3">
@@ -27,10 +28,12 @@
     //수정버튼을 눌렀을때
     $(frm).on("submit", function(e){
         e.preventDefault();
+        const uid=$(frm.uid).val();
         const uname=$(frm.uname).val();
         const phone=$(frm.phone).val();
         const address1=$(frm.address1).val();
         const address2=$(frm.address2).val();
+        if(confirm("변경된 내용을 저장하실래요?")) frm.submit();
     });
 
 

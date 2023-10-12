@@ -78,4 +78,21 @@ router.get('/update', function(req, res){
     });
 });
 
+//정보수정
+router.post('/update', function(req, res){
+    const uid=req.body.uid;
+    const uname=req.body.uname;
+    const phone=req.body.phone;
+    const address1=req.body.address1;
+    const address2=req.body.address2;
+    const photo = req.file.filename;
+    console.log('photo..........', photo);
+    console.log(uid, uname, phone, address1, address2);
+    const sql='update users set uname=?,phone=?,address1=?,address2=? where uid=?';
+    db.get().query(sql,[uname,phone,address1,address2,uid], function(err, rows){
+        if(err) console.log(err);
+        res.redirect('/users/mypage?uid=' + uid);
+    });
+});
+
 module.exports = router;
