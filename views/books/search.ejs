@@ -20,16 +20,20 @@
     <table class="table">
         {{#each documents}}
         <tr>
-            <td><img src="{{isImage thumbnail}}" width="50" style="cursor:pointer;"></td>
+            <td><img idx="{{@index}}" src="{{isImage thumbnail}}" width="50" style="cursor:pointer;"></td>
             <td>{{title}}</td>
             <td>{{fmtPrice price}}</td>
             <td>{{authors}}</td>
-        </tr>    
-        <%-include("modal.ejs")%>
+            <td><button class="btn btn-primary" book="{{toString @this}}">도서저장</button></td>
+        </tr>  
+        <%-include("modal.ejs")%>  
         {{/each}}
     </table>    
 </script>
 <script>
+    Handlebars.registerHelper("toString", function(book){
+        return JSON.stringify(book);
+    });
     Handlebars.registerHelper("isImage", function(image){
         if(image){
             return image;
@@ -46,9 +50,31 @@
     let page=1;
     getBooks();
 
+    //도서등록 버튼을 클릭한 경우
+    $("#div_books").on("click", "button", function(){
+        const book=JSON.parse($(this).attr("book"));
+        const title=book.title;
+        const authors=book.authors.join();
+        const thumbnail = book.thumbnail;
+        const contents=book.contents;
+        const publisher=book.publisher;
+        const price=book.price;
+        if(confirm("도서를 등록하실래요?")) {
+            $.ajax({
+                type:"post",
+                url:"/books/search/insert",
+                data: {title,authors,thumbnail,contents,publisher,price},
+                success:function(){
+                    alert("도서가 등록되었습니다.");
+                }
+            })
+        }
+    });
+
     //이미지를 클릭한 경우
     $("#div_books").on("click", "img", function(){
-        $("#modal").modal("show");
+        const idx = $(this).attr("idx");
+        $("#modal" + idx).modal("show");
     });
 
     $("#next").on("click", function(){

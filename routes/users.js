@@ -92,20 +92,18 @@ router.get('/update', function(req, res){
     });
 });
 
-//정보수정
+//정보수정하기
 router.post('/update',upload.single('file'), function(req, res){
-    const uid=req.body.uid;
     const uname=req.body.uname;
+    const uid=req.body.uid;
     const phone=req.body.phone;
     const address1=req.body.address1;
     const address2=req.body.address2;
     let photo=req.body.photo;
-    if(req.file) photo = req.file.filename;
-    console.log('photo.....', photo);
-
-    const sql='update users set uname=?,phone=?,address1=?,address2=?, photo=? where uid=?';
+    if(req.file) photo=req.file.filename;
+    const sql='update users set uname=?,phone=?,address1=?,address2=?,photo=? where uid=?';
     db.get().query(sql,[uname,phone,address1,address2,photo,uid], function(err, rows){
-        if(err) console.log(err);
+        if(err) console.log('sql 오류...............', err);
         res.redirect('/users/mypage?uid=' + uid);
     });
 });
