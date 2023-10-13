@@ -8,6 +8,7 @@
             </div>
         </form>
     </div>
+    <hr>
     <div id="div_books"></div>
     <div class="text-center">
         <button id="prev" class="btn btn-primary">이전</button>
@@ -59,13 +60,18 @@
         const contents=book.contents;
         const publisher=book.publisher;
         const price=book.price;
+        const isbn=book.isbn;
         if(confirm("도서를 등록하실래요?")) {
             $.ajax({
                 type:"post",
                 url:"/books/search/insert",
-                data: {title,authors,thumbnail,contents,publisher,price},
-                success:function(){
-                    alert("도서가 등록되었습니다.");
+                data: {title,authors,thumbnail,contents,publisher,price, isbn},
+                success:function(data){
+                    if(data=='0'){
+                        alert("도서가 등록되었습니다.");
+                    }else{
+                        alert("이미 등록된 도서입니다.");
+                    }
                 }
             })
         }
