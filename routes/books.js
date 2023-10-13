@@ -19,6 +19,7 @@ router.post('/search/insert', function(req, res){
     //console.log(title,authors,price,publisher,image,contents);
     const sql1='select * from books where isbn=?';
     db.get().query(sql1, [isbn], function(err, rows){
+        if(err) console.log('isbn검색:',err);
         if(rows.length > 0) { //이미도서가 등록된 경우
             res.send('1');
         }else{ //도서가 없는 경우
