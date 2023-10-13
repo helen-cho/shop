@@ -1,0 +1,50 @@
+<div class="my-5">
+    <h1 class="text-center mb-5">도서목록</h1>
+    <div id="div_books"></div>
+    <div id="pagination" class="pagination justify-content-center mt-5"></div>
+</div>
+<!--도서목록 템플릿-->
+<script id="temp_books" type="x-handlebars-template">
+    <table class="table">
+        {{#each .}}
+            <tr>
+                <td width="5%">{{bid}}</td>
+                <td width="30%"><div class="ellipsis">{{title}}</div></td>
+                <td width="5%">{{price}}</td>
+                <td width="20%"><div class="ellipsis">{{authors}}</div></td>
+                <td><div class="ellipsis">{{contents}}</div></td>
+            </tr>    
+        {{/each}}
+    </table>    
+</script>
+<script>
+    let page=1;
+    getBooks();
+    function getBooks(){
+        $.ajax({
+            type:"get",
+            url:"/books/list.json",
+            data:{page},
+            success:function(data){
+                //console.log(data);
+                const temp=Handlebars.compile($("#temp_books").html());
+                $("#div_books").html(temp(data));
+            }
+        })
+    }
+
+    $('#pagination').twbsPagination({
+        totalPages:10, //총 페이지 번호 수
+        visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
+        startPage : 1, // 시작 시 표시되는 현재 페이지
+        initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
+        first : '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+        prev : '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
+        next : '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
+        last : '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
+        onPageClick: function (event, clickPage) {
+            page=clickPage; 
+            getBooks(); 
+        }
+    });
+</script>

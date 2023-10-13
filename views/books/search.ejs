@@ -66,6 +66,7 @@
             return;
         }
         if(confirm(chk + "개 도서를 저장하실래요?")){
+            let count=0;
             $("#div_books .chk:checked").each(function(){
                 const book=JSON.parse($(this).attr("book"));
                 const authors=book.authors.join();
@@ -73,12 +74,17 @@
                     type:"post",
                     url:"/books/search/insert",
                     data:{...book, authors},
-                    success:function(){}
+                    success:function(data){
+                        console.log(data);
+                        if(data==0) count++;
+                    }
                 });
             });
-            alert("저장되었습니다.");
-            $("#div_books .chk").prop("checked", false);
-            $("#div_books #all").prop("checked", false);
+            setTimeout(function(){
+                alert(count + "개 도서가 저장되었습니다.");
+                $("#div_books .chk").prop("checked", false);
+                $("#div_books #all").prop("checked", false);
+            }, 1000);
         }
     });
 

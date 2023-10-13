@@ -32,4 +32,21 @@ router.post('/search/insert', function(req, res){
     });
 });
 
+//도서목록 JSON
+router.get('/list.json', function(req, res){
+    const page=req.query.page;
+    const start=(parseInt(page)-1) * 5;
+    const sql='select * from books order by bid desc limit ?, 5';
+    db.get().query(sql, [start], function(err, rows){
+        if(err) console.log('도서목록JSON:' , err);
+        res.send(rows);
+    });
+})
+
+
+//도서목록 페이지 이동
+router.get('/list', function(req, res){
+    res.render('index', {title:'도서목록', pageName:'books/list.ejs'});
+});
+
 module.exports = router;
