@@ -1,5 +1,7 @@
 <div class="my-5">
     <h1 class="text-center mb-5">도서목록</h1>
+    <div>전체 도서수: <span id="total"></span></div>
+    <hr>
     <div id="div_books"></div>
     <div id="pagination" class="pagination justify-content-center mt-5"></div>
 </div>
@@ -19,7 +21,20 @@
 </script>
 <script>
     let page=1;
-    getBooks();
+
+    getTotal();
+    function getTotal(){
+        $.ajax({
+            type:"get",
+            url:"/books/count",
+            success:function(data){
+                $("#total").html(data.total + "권");
+                const totalPages = Math.ceil(data.total/5);
+                $("#pagination").twbsPagination("changeTotalPages", totalPages, page)
+            }
+        })
+    }
+
     function getBooks(){
         $.ajax({
             type:"get",
@@ -29,6 +44,7 @@
                 //console.log(data);
                 const temp=Handlebars.compile($("#temp_books").html());
                 $("#div_books").html(temp(data));
+                const totalPages=20;
             }
         })
     }

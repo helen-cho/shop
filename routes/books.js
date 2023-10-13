@@ -49,4 +49,12 @@ router.get('/list', function(req, res){
     res.render('index', {title:'도서목록', pageName:'books/list.ejs'});
 });
 
+//데이터갯수
+router.get('/count', function(req, res){
+    const sql='select count(*) total from books';
+    db.get().query(sql, function(err, rows){
+        res.send(rows[0]);
+    });
+});
+
 module.exports = router;
