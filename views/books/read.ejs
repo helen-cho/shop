@@ -1,0 +1,37 @@
+<div class="my-5">
+    <h1 class="text-center mb-5">도서정보</h1>
+    <div class="text-end">
+        <a href="/books/update?bid=<%=book.bid%>" class="btn btn-primary">정보수정</a>
+    </div>
+    <div class="card p-3 row m-2">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <img id="image" src="<%=book.image%>" width="100%" style="cursor: pointer;">
+                <input id="file" type="file" class="form-control" style="display: none;">
+                <button class="btn btn-primary w-100">이미지저장</button>
+            </div>
+            <div class="col">
+                <h5 class="my-3">코드: <%=book.bid%></h5>
+                <h5 class="my-3">제목: <%=book.title%></h5>
+                <h5 class="mb-3">가격: <%=book.fmtprice%>원</h5>
+                <h5 class="mb-3">저자: <%=book.authors%></h5>
+                <h5 class="mb-3">출판사: <%=book.publisher%></h5>
+                <h5 class="mb-3">ISBN: <%=book.isbn%></h5>
+                <h5 class="mb-3">등록일: <%=book.fmtdate%></h5>
+            </div>
+        </div>
+        <hr>
+        <div><%=book.contents%></div>
+    </div>
+</div>
+<script>
+    //파일이 변경된 경우
+    $("#file").on("change", function(e){
+        $("#image").attr("src", URL.createObjectURL(e.target.files[0]));
+    });
+
+    //이미지를 클릭한 경우
+    $("#image").on("click", function(){
+        $("#file").click();
+    })
+</script>

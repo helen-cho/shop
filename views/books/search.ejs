@@ -59,7 +59,7 @@
     getBooks();
 
     //선택저장버튼을 클릭한 경우
-    $("#div_books").on("click", "#save", function(){
+    $("#div_books").on("click", "#save",async function(){
         const chk=$("#div_books .chk:checked").length;
         if(chk==0) {
             alert("저장할 도서를 선택하세요!");
@@ -67,7 +67,7 @@
         }
         if(confirm(chk + "개 도서를 저장하실래요?")){
             let count=0;
-            $("#div_books .chk:checked").each(function(){
+            await $("#div_books .chk:checked").each(function(){
                 const book=JSON.parse($(this).attr("book"));
                 const authors=book.authors.join();
                 $.ajax({
@@ -80,11 +80,18 @@
                     }
                 });
             });
+
+            alert(count + "개 도서가 저장되었습니다.");
+            $("#div_books .chk").prop("checked", false);
+            $("#div_books #all").prop("checked", false);
+            
+            /*
             setTimeout(function(){
                 alert(count + "개 도서가 저장되었습니다.");
                 $("#div_books .chk").prop("checked", false);
                 $("#div_books #all").prop("checked", false);
             }, 1000);
+            */
         }
     });
 

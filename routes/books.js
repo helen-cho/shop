@@ -57,4 +57,50 @@ router.get('/count', function(req, res){
     });
 });
 
+//도서삭제
+router.post('/delete', function(req, res){
+    const bid=req.body.bid;
+    const sql='delete from books where bid=?';
+    db.get().query(sql, [bid], function(err){
+        if(err) console.log('도서삭제......', err);
+        res.sendStatus(200);
+    });
+});
+
+//도서정보 페이지이동
+router.get('/read', function(req, res){
+    const bid=req.query.bid;
+    const sql='select *,format(price, 0) fmtprice, date_format(regdate, "%Y-%m-%d") fmtdate from books where bid=?';
+    db.get().query(sql, [bid], function(err, rows){
+        if(err) console.log('도서정보.........',err);
+        res.render('index', {title:'도서정보', pageName:'books/read.ejs', book:rows[0]});
+    });
+});
+
+//도서수정 페이지이동
+router.get('/update', function(req, res){
+    const bid=req.query.bid;
+    const sql='select *,format(price, 0) fmtprice, date_format(regdate, "%Y-%m-%d") fmtdate from books where bid=?';
+    db.get().query(sql, [bid], function(err, rows){
+        if(err) console.log('도서정보.........',err);
+        res.render('index', {title:'정보수정', pageName:'books/update.ejs', book:rows[0]});
+    });
+})
+
+//도서수정
+router.post('/update', function(req, res){
+    const bid=req.body.bid;
+    const title=req.body.title;
+    const price=req.body.price;
+    const authors=req.body.authors;
+    const publisher=req.body.publisher;
+    const contents=req.body.contents;
+    //console.log(bid,title,price,authors,publisher,contents);
+    const sql='update books set title=?,price=?,authors=?,publisher=?,contents=? where bid=?';
+    db.get().query(sql,[title,price,authors,publisher,contents,bid],function(err){
+        if(err) console.log('수정오류..........', err);
+        res.redirect('/books/read?bid=' + bid);
+    })
+});
+
 module.exports = router;

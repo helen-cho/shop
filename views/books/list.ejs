@@ -8,21 +8,89 @@
 <!--도서목록 템플릿-->
 <script id="temp_books" type="x-handlebars-template">
     <table class="table">
+            <tr>
+                <td colspan="7">
+                    <input id="all" type="checkbox">
+                    <button class="sel-delete btn btn-danger btn-sm ms-3">선택삭제</button>
+                </td>
+            </tr>    
         {{#each .}}
             <tr>
+                <td><input class="chk" type="checkbox" bid="{{bid}}"></td>
                 <td width="5%">{{bid}}</td>
-                <td width="30%"><div class="ellipsis">{{title}}</div></td>
+                <td width="20%">
+                    <div class="ellipsis">
+                        <a href="/books/read?bid={{bid}}">{{title}}</a>
+                    </div>
+                </td>
                 <td width="5%">{{price}}</td>
-                <td width="20%"><div class="ellipsis">{{authors}}</div></td>
-                <td><div class="ellipsis">{{contents}}</div></td>
+                <td width="15%"><div class="ellipsis">{{authors}}</div></td>
+                <td width="40%"><div class="ellipsis">{{contents}}</div></td>
+                <td><button bid="{{bid}}" class="btn-delete btn btn-danger btn-sm">삭제</button></td>
             </tr>    
         {{/each}}
     </table>    
 </script>
 <script>
     let page=1;
-
     getTotal();
+
+    //선택삭제 버튼을 클릭한 경우
+    $("#div_books").on("click", ".sel-delete", function(){
+        const chk=$("#div_books .chk:checked").length;
+        if(chk==0) {
+            alert("삭제할 도서를 선택하세요!");
+            return;
+        }
+        if(!confirm(`${chk}개 도서를 삭제하실래요?`)) return;
+        $("#div_books .chk:checked").each(function(){
+            const bid=$(this).attr("bid");
+            $.ajax({
+                type:"post",
+                url:"/books/delete",
+                data:{bid},
+                success:function(){
+                    getTotal();
+                }
+            });
+        });
+    });
+
+    //전체선택 체크박스를 클릭한 경우
+    $("#div_books").on("click", "#all", function(){
+        if($(this).is(":checked")){
+            $("#div_books .chk").prop("checked", true);
+        }else{
+            $("#div_books .chk").prop("checked", false);
+        }
+    });
+
+    //각행의 체크박스를 클릭한 경우
+    $("#div_books").on("click", ".chk", function(){
+        const all=$("#div_books .chk").length;
+        const chk=$("#div_books .chk:checked").length;
+        if(all==chk){
+            $("#div_books #all").prop("checked", true);
+        }else{
+            $("#div_books #all").prop("checked", false);
+        }
+    });
+
+    //각행의 삭제버튼을 클릭한 경우
+    $("#div_books").on("click", ".btn-delete", function(){
+        const bid=$(this).attr("bid");
+        if(!confirm(bid + "번 도서를 삭제하실래요?")) return;
+        $.ajax({
+            type:"post",
+            url:"/books/delete",
+            data: {bid: bid},
+            success:function(){
+                alert("도서가 삭제되었습니다.");
+                getTotal();
+            }
+        });
+    });
+
     function getTotal(){
         $.ajax({
             type:"get",
@@ -54,10 +122,10 @@
         visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
         startPage : 1, // 시작 시 표시되는 현재 페이지
         initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
-        first : '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
-        prev : '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
-        next : '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
-        last : '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
+        first : '<i class="bi bi-chevron-bar-left"></i>', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+        prev : '<i class="bi bi-chevron-left"></i>', // 이전 페이지 버튼에 쓰여 있는 텍스트
+        next : '<i class="bi bi-chevron-right"></i>', // 다음 페이지 버튼에 쓰여 있는 텍스트
+        last : '<i class="bi bi-chevron-bar-right"></i>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
         onPageClick: function (event, clickPage) {
             page=clickPage; 
             getBooks(); 
