@@ -1,6 +1,20 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
+var multer= require('multer');
+
+//도서이미지 업로드함수
+var upload = multer({
+    storage:multer.diskStorage({
+        destination:(req, file, done)=>{
+            done(null, './public/upload/book')
+        },
+        filename:(req, file, done)=>{
+            var fileName=Date.now() + ".jpg";
+            done(null, fileName);
+        }
+    })
+});
 
 /*도서검색페이지 */
 router.get('/', function(req, res, next) {
@@ -102,5 +116,22 @@ router.post('/update', function(req, res){
         res.redirect('/books/read?bid=' + bid);
     })
 });
+
+//이미지 업로드
+router.post('/upload', upload.single('file'), function(req, res){
+    if(req.file){
+        const bid=req.body.bid;
+        //console.log('파일이름:', req.file.filename, bid);
+        const image = '/upload/book/' + req.file.filename;
+        const sql='update books set image=? where bid=?';
+        db.get().query(sql, [image, bid], function(err){
+            if(err) console.log('이미지 업로드오류:', err);
+            res.redirect('/books/read?bid=' + bid);
+        });
+    }
+});
+
+
+
 
 module.exports = router;

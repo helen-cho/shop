@@ -17,6 +17,7 @@
         {{#each .}}
             <tr>
                 <td><input class="chk" type="checkbox" bid="{{bid}}"></td>
+                <td><img src="{{isImage image}}" width="30px"></td>
                 <td width="5%">{{bid}}</td>
                 <td width="20%">
                     <div class="ellipsis">
@@ -30,6 +31,15 @@
             </tr>    
         {{/each}}
     </table>    
+</script>
+<script>
+    Handlebars.registerHelper("isImage", function(image){
+        if(image){
+            return image;
+        }else {
+            return "http://via.placeholder.com/170x230";
+        }
+    });
 </script>
 <script>
     let page=1;
