@@ -50,8 +50,10 @@ router.post('/search/insert', function(req, res){
 router.get('/list.json', function(req, res){
     const page=req.query.page;
     const start=(parseInt(page)-1) * 5;
-    const sql='select * from books order by bid desc limit ?, 5';
-    db.get().query(sql, [start], function(err, rows){
+    const key=req.query.key;
+    const query='%' + req.query.query + '%';
+    const sql='select * from books where '+ key +' like ? order by bid desc limit ?, 5';
+    db.get().query(sql, [query, start], function(err, rows){
         if(err) console.log('도서목록JSON:' , err);
         res.send(rows);
     });
