@@ -125,13 +125,22 @@
     });
 
     function getTotal(){
+        const key=$(frm.key).val();
+        const query=$(frm.query).val();
         $.ajax({
             type:"get",
             url:"/books/count",
+            data:{key, query},
             success:function(data){
                 $("#total").html(data.total + "권");
-                const totalPages = Math.ceil(data.total/5);
-                $("#pagination").twbsPagination("changeTotalPages", totalPages, page)
+                if(data.total>0){
+                    const totalPages = Math.ceil(data.total/5);
+                    $("#pagination").twbsPagination("changeTotalPages", totalPages, page)
+                }else{
+                    alert("검색 내용이 없습니다.");
+                    $(frm.query).val("");
+                    getTotal();
+                }
             }
         })
     }

@@ -51,14 +51,13 @@ router.get('/list.json', function(req, res){
     const page=req.query.page;
     const start=(parseInt(page)-1) * 5;
     const key=req.query.key;
-    const query='%' + req.query.query + '%';
-    const sql='select * from books where '+ key +' like ? order by bid desc limit ?, 5';
+    const query=`%${req.query.query}%`;
+    const sql=`select * from books where ${key} like ? order by bid desc limit ?, 5`;
     db.get().query(sql, [query, start], function(err, rows){
         if(err) console.log('도서목록JSON:' , err);
         res.send(rows);
     });
 })
-
 
 //도서목록 페이지 이동
 router.get('/list', function(req, res){
@@ -67,8 +66,10 @@ router.get('/list', function(req, res){
 
 //데이터갯수
 router.get('/count', function(req, res){
-    const sql='select count(*) total from books';
-    db.get().query(sql, function(err, rows){
+    const key=req.query.key;
+    const query='%' + req.query.query + "%";
+    const sql=`select count(*) total from books where ${key} like ?`;
+    db.get().query(sql, [query], function(err, rows){
         res.send(rows[0]);
     });
 });
