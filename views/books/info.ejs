@@ -1,0 +1,71 @@
+<style>
+    .bi {
+        color: pink;
+        cursor: pointer;
+    }
+</style>
+<div class="my-5">
+    <h1 class="text-center mb-5">도서정보</h1>
+    <div class="row">
+        <div class="col-lg-4 mb-3">
+            <img src="<%=book.image%>" width="90%">
+        </div>
+        <div class="col pt-3">
+            <h5>
+                [<%=book.bid%>] <%=book.title%>
+                <span id="like">
+                    <i class="bi bi-heart ms-2"></i>
+                    <i class="bi bi-heart-fill ms-2" style="display: none;"></i>
+                </span>
+            </h5>
+            <hr>
+            <div class="my-3">저 자: <%=book.authors%></div>
+            <div class="my-3">가 격: <%=book.fmtprice%>원</div>
+            <div class="my-3">등록일: <%=book.fmtdate%></div>
+            <div class="my-3">출판사: <%=book.publisher%></div>
+            <div class="my-3">ISBN: <%=book.isbn%></div>
+            <hr>
+            <button class="btn btn-warning px-5">장바구니</button>
+            <button class="btn btn-success px-5">바로구매</button>
+        </div>
+    </div>
+</div>
+<script>
+    const bid="<%=book.bid%>";
+    $("#like").on("click", ".bi-heart", function(){
+        if(!sessionStorage.getItem("uid")){
+            sessionStorage.setItem("target", "/books/info?bid=" + bid);
+            location.href="/users/login";
+        }else{
+            //좋아요 추가
+            $.ajax({
+                type:"post",
+                url:"/books/like/insert",
+                data:{bid, uid:sessionStorage.getItem("uid")},
+                success:function(){
+                    alert("좋아요 추가!");
+                    check();
+                }
+            });
+        }
+    });
+
+    check();
+    //좋아요 체크
+    function check(){
+        $.ajax({
+            type:"get",
+            url:"/books/like/check",
+            data:{bid, uid:sessionStorage.getItem("uid")},
+            success:function(data){
+                if(data==0){
+                    $("#like .bi-heart").show();
+                    $("#like .bi-heart-fill").hide();
+                }else{
+                    $("#like .bi-heart").hide();
+                    $("#like .bi-heart-fill").show();
+                }
+            }
+        })
+    }
+</script>

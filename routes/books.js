@@ -134,7 +134,33 @@ router.post('/upload', upload.single('file'), function(req, res){
     }
 });
 
+//도서정보 페이지 출력
+router.get('/info', function(req, res){
+    const bid=req.query.bid;
+    const sql='select *, format(price,0) fmtprice,date_format(regdate,"%Y-%m-%d") fmtdate from books where bid=?';
+    db.get().query(sql, [bid], function(err, rows){
+        res.render('index', {title:'도서정보', pageName:'books/info.ejs', book:rows[0]});
+    });  
+});
 
+//좋아요 추가
+router.post('/like/insert', function(req, res){
+    const bid=req.body.bid;
+    const uid=req.body.uid;
+    const sql='insert into favorite(bid, uid) values(?,?)';
+    db.get().query(sql, [bid, uid], function(err){
+        res.sendStatus(200);
+    });
+});
 
+//좋아요 체크
+router.get('/like/check', function(req, res){
+    const uid=req.query.uid;
+    const bid=req.query.bid;
+    const sql='select count(*) cnt from favorite where bid=? and uid=?';
+    db.get().query(sql, [bid, uid], function(err, rows){
+        res.send(rows[0].cnt.toString());
+    });
+});
 
 module.exports = router;
