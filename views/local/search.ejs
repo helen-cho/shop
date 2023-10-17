@@ -1,0 +1,67 @@
+<div class="my-5 row">
+    <h1 class="text-center mb-5">지역검색</h1>
+    <div class="row mb-3">
+        <form name="frm" class="col-md-4">
+            <div class="input-group">
+                <input name="query" value="버거킹" class="form-control">
+                <button class="btn btn-primary">검색</button>
+            </div>
+        </form>
+    </div>
+    <hr>
+    <div id="div_local"></div>
+    <div id="map" style="height:400px;"></div>
+</div>
+<script id="temp_local" type="x-handlbars-template">
+    <table class="table">
+        {{#each documents}}
+        <tr>
+            <td>{{place_name}}</td>
+            <td>{{address_name}}</td>
+            <td>{{phone}}</td>
+            <td><button x="{{x}}" y="{{y}}" name="{{place_name}}" class="btn btn-success btn-sm">위치보기</button></td>
+        </tr>    
+        {{/each}}
+    </table>    
+</script>
+<script>
+    $(frm).on("submit", function(e){
+        e.preventDefault();
+        if($(frm.query).val()=="") {
+            alert("검색어를 입력하세요!");
+            $(frm.query).focus();
+        }else{
+            getList();
+        }
+    });
+
+    $("#div_local").on("click", "button", function(){
+        const x=$(this).attr("x");
+        const y=$(this).attr("y");
+        const name=$(this).attr("name");
+        console.log(x, y, name);
+
+        var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+        var options = { //지도를 생성할 때 필요한 기본 옵션
+            center: new kakao.maps.LatLng(y, x), //지도의 중심좌표.
+            level: 3 //지도의 레벨(확대, 축소 정도)
+        };
+        var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+    });
+    
+    //검색결과
+    getList();
+    function getList(){
+        $.ajax({
+            type:"get",
+            url:"https://dapi.kakao.com/v2/local/search/keyword.json",
+            data:{query: $(frm.query).val(), size:5},
+            headers:{"Authorization":"KakaoAK d98342bfb3d10bd8a8d18f10982fe1c8"},
+            success:function(data){
+                //console.log(data);
+                const temp=Handlebars.compile($("#temp_local").html());
+                $("#div_local").html(temp(data));
+            }
+        })
+    }
+</script>
