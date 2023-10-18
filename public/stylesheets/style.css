@@ -5,8 +5,10 @@
   font-style: normal;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Sunflower:wght@700&display=swap');
+
 * {
-  font-family: 'GmarketSansMedium';
+  font-family: 'Sunflower', sans-serif;
 }
 
 form span {

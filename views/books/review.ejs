@@ -1,12 +1,14 @@
 <div>
     <h1 class="text-center">리뷰목록</h1>
     <div id="div_review"></div>
+    <div id="pagination" class="pagination justify-content-center mt-5"></div>
+
 </div>
 <script id="temp_review" type="x-handlebars-template">
     {{#each .}}
         <div class="card mb-3">
             <div class="card-body">
-                <div class="ellipsis2" style="cursor:pointer">[{{rid}}] {{contents}}</div>
+                <div class="ellipsis2 contents" style="cursor:pointer">[{{rid}}] {{contents}}</div>
             </div>
             <div class="card-footer">
                 Created by {{uid}} on {{regdate}}
@@ -15,12 +17,36 @@
     {{/each}}
 </script>
 <script>
-    getReview();
+    let page=1;
+    getTotal();
+
+    //댓글내용을 클릭한 경우
+    $("#div_review").on("click", ".contents", function(){
+        $(this).toggleClass("ellipsis2");
+    });
+
+    function getTotal() {
+        $.ajax({
+            type:"get",
+            url:"/review/count",
+            data:{bid:"<%=book.bid%>"},
+            success:function(data){
+                if(data <= 5) {
+                    $("#pagination").hide();
+                }else{
+                    $("#pagination").show();
+                    const totalPages = Math.ceil(data/5);
+                    $("#pagination").twbsPagination("changeTotalPages", totalPages, page);
+                }
+            }
+        });
+    }
+
     function getReview(){
         $.ajax({
             type:"get",
             url:"/review/list.json",
-            data:{bid:"<%=book.bid%>"},
+            data:{bid:"<%=book.bid%>", page},
             success:function(data){
                 //console.log(data);
                 const temp=Handlebars.compile($("#temp_review").html());
@@ -28,4 +54,19 @@
             }
         })
     }
+
+    $('#pagination').twbsPagination({
+        totalPages:10, //총 페이지 번호 수
+        visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
+        startPage : 1, // 시작 시 표시되는 현재 페이지
+        initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
+        first : '<i class="bi bi-chevron-bar-left"></i>', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+        prev : '<i class="bi bi-chevron-left"></i>', // 이전 페이지 버튼에 쓰여 있는 텍스트
+        next : '<i class="bi bi-chevron-right"></i>', // 다음 페이지 버튼에 쓰여 있는 텍스트
+        last : '<i class="bi bi-chevron-bar-right"></i>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
+        onPageClick: function (event, clickPage) {
+            page=clickPage;
+            getReview(); 
+        }
+    });
 </script>
