@@ -1,12 +1,3 @@
-<style>
-    #like {
-        color: red;
-        cursor: pointer;
-    }
-    #count {
-        font-size: 0.5rem;
-    }
-</style>
 <div class="my-5">
     <h1 class="text-center mb-5">도서정보</h1>
     <div class="row">
@@ -16,8 +7,8 @@
         <div class="col pt-3">
             <h5 id="title">
                 [<%=book.bid%>] <%=book.title%>
-                <i class="bi bi-heart ms-3" id="like"></i>
-                <span id="count">0</span>
+                <i class="bi bi-heart ms-3 like" id="like"></i>
+                <span id="count" class="count">0</span>
             </h5>
             <hr>
             <div class="my-3">저 자: <%=book.authors%></div>

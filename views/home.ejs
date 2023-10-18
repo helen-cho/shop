@@ -26,7 +26,7 @@
                 <div class="card-footer">
                     <span style="font-size:0.7rem;">{{fmtPrice price}}</span>
                     <span class="float-end">
-                        <i class="bi bi-heart ms-3 like"></i>
+                        <i class="bi {{heart ucnt}} like"></i>
                         <span class="count">{{fcnt}}</span>
                     </span>    
                 </div>    
@@ -35,6 +35,13 @@
     {{/each}}
 </script>
 <script>
+    Handlebars.registerHelper("heart", function(ucnt){
+        if(ucnt==1){
+            return "bi-heart-fill";
+        }else{
+            return "bi-heart";
+        }
+    })
     Handlebars.registerHelper("isImage", function(image){
         if(image){
             return image;
