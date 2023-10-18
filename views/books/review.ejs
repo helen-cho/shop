@@ -1,0 +1,31 @@
+<div>
+    <h1 class="text-center">리뷰목록</h1>
+    <div id="div_review"></div>
+</div>
+<script id="temp_review" type="x-handlebars-template">
+    {{#each .}}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="ellipsis2" style="cursor:pointer">[{{rid}}] {{contents}}</div>
+            </div>
+            <div class="card-footer">
+                Created by {{uid}} on {{regdate}}
+            </div>
+        </div>    
+    {{/each}}
+</script>
+<script>
+    getReview();
+    function getReview(){
+        $.ajax({
+            type:"get",
+            url:"/review/list.json",
+            data:{bid:"<%=book.bid%>"},
+            success:function(data){
+                //console.log(data);
+                const temp=Handlebars.compile($("#temp_review").html());
+                $("#div_review").html(temp(data));
+            }
+        })
+    }
+</script>
