@@ -1,11 +1,10 @@
 <style>
     #like {
-        color: pink;
+        color: red;
         cursor: pointer;
-        font-size: 2rem;
     }
     #count {
-        font-size: 0.7rem;
+        font-size: 0.5rem;
     }
 </style>
 <div class="my-5">
@@ -15,11 +14,10 @@
             <img src="<%=book.image%>" width="90%">
         </div>
         <div class="col pt-3">
-            <h5>
+            <h5 id="title">
                 [<%=book.bid%>] <%=book.title%>
-                <i class="bi bi-heart ms-3" id="like">
-                    <span id="count">0</span>
-                </i>
+                <i class="bi bi-heart ms-3" id="like"></i>
+                <span id="count">0</span>
             </h5>
             <hr>
             <div class="my-3">저 자: <%=book.authors%></div>
@@ -35,6 +33,38 @@
 </div>
 <script>
     getCheck();
+
+    //빈하트 클릭(추가)
+    $("#title").on("click", ".bi-heart", function(){
+        if(!sessionStorage.getItem("uid")){
+            sessionStorage.setItem("target", "/books/info?bid=<%=book.bid%>");
+            location.href="/users/login"
+        }else{
+            $.ajax({
+                type:"post",
+                url:"/books/like/insert",
+                data:{uid:sessionStorage.getItem("uid"), bid:"<%=book.bid%>"},
+                success:function(){
+                    alert("좋아요 추가!");
+                    getCheck();
+                }
+            });
+        }
+    });
+
+    //채워진 하트클릭(삭제)
+    $("#title").on("click", ".bi-heart-fill", function(){
+        $.ajax({
+            type:"get",
+            url:"/books/like/delete",
+            data:{uid:sessionStorage.getItem("uid"), bid:"<%=book.bid%>"},
+            success:function(){
+                alert("좋아요 취소!");
+                getCheck();
+            }
+        })
+    });
+
     function getCheck(){
         $.ajax({
             type:"get",
@@ -45,6 +75,9 @@
                 if(data.ucnt==1) {
                     $("#like").removeClass("bi-heart");
                     $("#like").addClass("bi-heart-fill");
+                }else{
+                    $("#like").removeClass("bi-heart-fill");
+                    $("#like").addClass("bi-heart");
                 }
             }
         })

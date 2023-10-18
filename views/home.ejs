@@ -24,7 +24,11 @@
                     <div class="ellipsis mt-2">{{title}}</div>
                 </div>    
                 <div class="card-footer">
-                    {{fmtPrice price}}
+                    <span style="font-size:0.7rem;">{{fmtPrice price}}</span>
+                    <span class="float-end">
+                        <i class="bi bi-heart ms-3 like"></i>
+                        <span class="count">{{fcnt}}</span>
+                    </span>    
                 </div>    
             </div>    
         </div>    
@@ -75,7 +79,7 @@
         $.ajax({
             type:"get",
             url:"/books.json",
-            data:{page, query:$(frm.query).val()},
+            data:{page, query:$(frm.query).val(), uid:sessionStorage.getItem("uid")},
             success:function(data){
                 console.log(data);
                 const temp=Handlebars.compile($("#temp_books").html());
