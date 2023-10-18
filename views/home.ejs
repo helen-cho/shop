@@ -26,7 +26,7 @@
                 <div class="card-footer">
                     <span style="font-size:0.7rem;">{{fmtPrice price}}</span>
                     <span class="float-end">
-                        <i class="bi {{heart ucnt}} like"></i>
+                        <i class="bi {{heart ucnt}} like" bid="{{bid}}"></i>
                         <span class="count">{{fcnt}}</span>
                     </span>    
                 </div>    
@@ -56,6 +56,38 @@
 <script>
     let page=1;
     getTotal();
+
+    //좋아요 추가
+    $("#div_books").on("click", ".bi-heart", function(){
+        if(!sessionStorage.getItem("uid")){
+            location.href="/users/login";
+        }else{
+            const bid=$(this).attr("bid");
+            $.ajax({
+                type:"post",
+                url:"/books/like/insert",
+                data:{uid:sessionStorage.getItem("uid"), bid},
+                success:function(){
+                    alert("좋아요 추가!");
+                    getTotal();
+                }
+            })
+        }
+    });
+
+    //좋아요 취소
+    $("#div_books").on("click", ".bi-heart-fill", function(){
+        const bid=$(this).attr("bid");
+        $.ajax({
+            type:"get",
+            url:"/books/like/delete",
+            data:{uid:sessionStorage.getItem("uid"), bid},
+            success:function(){
+                alert("좋아요 취소!");
+                getTotal();
+            }
+        })
+    });
 
     $(frm).on("submit", function(e){
         e.preventDefault();
