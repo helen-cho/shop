@@ -20,4 +20,15 @@ router.get("/count", function(req, res){ //테스트 localhost:3000/review/count
     });
 });
 
+//리뷰등록
+router.post("/insert", function(req, res){
+    const bid=req.body.bid;
+    const uid=req.body.uid;
+    const contents=req.body.contents;
+    const sql='insert into review(bid, uid, contents) values(?,?,?)';
+    db.get().query(sql, [bid, uid, contents], function(err){
+        res.sendStatus(200);
+    });
+});
+
 module.exports = router;
