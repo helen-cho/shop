@@ -143,23 +143,36 @@ router.get('/info', function(req, res){
     });  
 });
 
-//좋아요 추가
+//좋아요추가
 router.post('/like/insert', function(req, res){
-    const bid=req.body.bid;
     const uid=req.body.uid;
-    const sql='insert into favorite(bid, uid) values(?,?)';
+    const bid=req.body.bid;
+    const sql='insert into favorite(uid, bid) values(?,?)';
+    db.get().query(sql, [uid, bid], function(err){
+        res.sendStatus(200);
+    })
+});
+
+//좋아요취소
+router.get('/like/delete', function(req, res){
+    const uid=req.query.uid;
+    const bid=req.query.bid;
+    const sql='delete from favorite where bid=? and uid=?';
     db.get().query(sql, [bid, uid], function(err){
         res.sendStatus(200);
     });
 });
 
-//좋아요 체크
+//좋아요수 체크
 router.get('/like/check', function(req, res){
     const uid=req.query.uid;
     const bid=req.query.bid;
-    const sql='select count(*) cnt from favorite where bid=? and uid=?';
-    db.get().query(sql, [bid, uid], function(err, rows){
-        res.send(rows[0].cnt.toString());
+    let sql='select count(*) fcnt,';
+    sql+='(select count(*) from favorite where bid=? and uid=?) ucnt ';
+    sql+='from favorite where bid=?';
+    db.get().query(sql, [bid, uid, bid], function(err, rows){
+        if(err) console.log('좋아요수 체크 오류:', err);
+        res.send(rows[0]);
     });
 });
 
