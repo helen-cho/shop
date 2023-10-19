@@ -32,11 +32,11 @@
             <div class="col update{{rid}}" style="display:none;">
                 <div style="color:gray;font-size:0.8rem;">{{fmtdate}}</div>
                 <div>
-                    <textarea class="form-control" rows="10">{{contents}}</textarea>
+                    <textarea id="contents{{rid}}" class="form-control" rows="10">{{contents}}</textarea>
                 </div>
                 <div class="text-end mt-2" style="{{show uid}}">
-                    <button class="btn btn-primary btn-sm">저장</button>
-                    <button rid="{{rid}}" class="btn btn-secondary btn-sm">취소</button>
+                    <button rid="{{rid}}" class="btn-save btn btn-primary btn-sm">저장</button>
+                    <button rid="{{rid}}" class="btn-cancel btn btn-secondary btn-sm">취소</button>
                 </div>        
             </div>                   
         </div>
@@ -59,8 +59,22 @@
     let page=1;
     getTotal();
 
+    //각행의 저정버튼을 클릭한 경우
+    $("#div_review").on("click", ".btn-save", function(){
+        const rid=$(this).attr("rid");
+        const contents=$("#div_review #contents" + rid).val();
+        alert(contents);
+    });
+
     //각행의 수정버튼을 클릭한 경우
     $("#div_review").on("click", ".btn-update", function(){
+        const rid=$(this).attr("rid");
+        $("#div_review .display" + rid).toggle();
+        $("#div_review .update" + rid).toggle();
+    });
+
+    //각행의 취소버튼을 클릭한 경우
+    $("#div_review").on("click", ".btn-cancel", function(){
         const rid=$(this).attr("rid");
         $("#div_review .display" + rid).toggle();
         $("#div_review .update" + rid).toggle();
