@@ -1,11 +1,6 @@
-@font-face {
-  font-family: 'GmarketSansMedium';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
 
 @import url('https://fonts.googleapis.com/css2?family=Sunflower:wght@700&display=swap');
+
 
 * {
   font-family: 'Sunflower', sans-serif;
@@ -18,7 +13,7 @@ form span {
 
 .photo {
   border-radius: 50%;
-  border: 2px solid gray;
+  border: 1px solid gray;
 }
 
 .ellipsis {

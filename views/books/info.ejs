@@ -43,8 +43,9 @@
     </div>
 </div>
 <script>
+    $("#profile-tab").click();
+    
     getCheck();
-
     //빈하트 클릭(추가)
     $("#title").on("click", ".bi-heart", function(){
         if(!sessionStorage.getItem("uid")){

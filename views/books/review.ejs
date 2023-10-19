@@ -12,19 +12,73 @@
 </div>
 <script id="temp_review" type="x-handlebars-template">
     {{#each .}}
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="ellipsis2 contents" style="cursor:pointer">[{{rid}}] {{contents}}</div>
+        <div class="row">
+            <div class="col-lg-1">
+                <img src="{{isImage photo}}" width="30px" class="photo">
+                <div style="font-size:0.7rem;">{{uname}}</div>
             </div>
-            <div class="card-footer">
-                Created by {{uid}} on {{regdate}}
-            </div>
-        </div>    
+            <!-- 보기 -->
+            <div class="col display{{rid}}">
+                <div style="color:gray;font-size:0.8rem;">{{fmtdate}}</div>
+                <div class="ellipsis2 contents" style="cursor:pointer;">
+                    [{{rid}}] {{contents}}
+                </div>
+                <div class="text-end mt-2" style="{{show uid}}">
+                    <button rid="{{rid}}" class="btn-update btn btn-primary btn-sm">수정</button>
+                    <button rid="{{rid}}" class="btn-delete btn btn-danger btn-sm">삭제</button>
+                </div>        
+            </div> 
+            <!-- 수정 -->
+            <div class="col update{{rid}}" style="display:none;">
+                <div style="color:gray;font-size:0.8rem;">{{fmtdate}}</div>
+                <div>
+                    <textarea class="form-control" rows="10">{{contents}}</textarea>
+                </div>
+                <div class="text-end mt-2" style="{{show uid}}">
+                    <button class="btn btn-primary btn-sm">저장</button>
+                    <button rid="{{rid}}" class="btn btn-secondary btn-sm">취소</button>
+                </div>        
+            </div>                   
+        </div>
+        <hr>      
     {{/each}}
+</script>
+<script>
+    Handlebars.registerHelper("show", function(uid){
+        if(uid!=sessionStorage.getItem("uid")) {
+            return "display:none;";
+        }
+    });
+
+    Handlebars.registerHelper("isImage", function(photo){
+        if(photo) return "/upload/photo/" +  photo;
+        else return "http://via.placeholder.com/100x100";
+    });
 </script>
 <script>
     let page=1;
     getTotal();
+
+    //각행의 수정버튼을 클릭한 경우
+    $("#div_review").on("click", ".btn-update", function(){
+        const rid=$(this).attr("rid");
+        $("#div_review .display" + rid).toggle();
+        $("#div_review .update" + rid).toggle();
+    });
+
+    //각행의 삭제버튼을 클릭한 경우
+    $("#div_review").on("click", ".btn-delete", function(){
+        const rid=$(this).attr("rid");
+        if(!confirm(`${rid}번 리뷰를 삭제하실래요?`)) return;
+        $.ajax({
+            type:"post",
+            url:"/review/delete",
+            data:{rid},
+            success:function(){
+                getTotal();
+            }
+        })
+    });
 
     if(sessionStorage.getItem("uid")){
         $("#btn-review, #div-review").toggle();
