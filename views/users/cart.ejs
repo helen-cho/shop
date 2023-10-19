@@ -22,14 +22,14 @@
             <span class="ms-3">전체선택</span>
         </div>
         <div class="col text-end">
-            <button class="btn btn-danger btn-sm">선택상품삭제</button>
+            <button class="btn-delete btn btn-danger btn-sm">선택상품삭제</button>
         </div>        
     </div>
     <hr>    
     <table class="table">
         {{#each .}}
             <tr>
-                <td><input class="chk" type="checkbox"></td>
+                <td><input cid="{{cid}}" class="chk" type="checkbox"></td>
                 <td>{{bid}}</td>
                 <td><img src="{{image}}" width="50px"></td>
                 <td>{{title}}</td>
@@ -42,6 +42,11 @@
                 <td><i class="bi bi-trash" cid="{{cid}}"></i></td>
             </tr>    
         {{/each}}
+        <tr>
+            <td colspan="8" class="text-end">
+                총상품금액: <sapn id="sum">0</span>원
+            </td>    
+        </tr>    
     </table>
 </script>
 <script>
@@ -51,6 +56,25 @@
 </script>
 <script>
     getCart();
+
+    //선택상품삭제 버튼을 클릭한 경우
+    $("#div_cart").on("click", ".btn-delete", function(){
+        const chk=$("#div_cart .chk:checked").length;
+        if(chk==0) {
+            alert("삭제할 상품을 하나이상 선택하세요!");
+            return;
+        }
+        $("#div_cart .chk:checked").each(function(){
+            const cid=$(this).attr("cid");
+            $.ajax({
+                type:"post",
+                url:"/cart/delete",
+                data:{cid},
+                success:function(){}
+            });
+            getCart();
+        });
+    });
 
     //all 체크박스를 클릭한 경우
     $("#div_cart").on("click", "#all", function(){
