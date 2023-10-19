@@ -43,7 +43,7 @@
             </tr>    
         {{/each}}
         <tr>
-            <td colspan="8" class="text-end">
+            <td colspan="8" class="text-end py-3 pe-5">
                 총상품금액: <sapn id="sum">0</span>원
             </td>    
         </tr>    
@@ -145,6 +145,12 @@
                 console.log(data);
                 const temp=Handlebars.compile($("#temp_cart").html());
                 $("#div_cart").html(temp(data));
+
+                let sum=0;
+                data.forEach(item=>{
+                    sum+=parseInt(item.sum);
+                });
+                $("#sum").html(sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원");
             }
         })
     }
