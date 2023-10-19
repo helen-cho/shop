@@ -3,15 +3,33 @@
         cursor: pointer;
         font-size: 1.5rem;
     }
+    .qnt {
+        border: 1px solid #EEEEEE;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        padding: 5px;
+        text-align: right;
+    }
 </style>
 <div class="my-5">
     <h1 class="text-center mb-5">장바구니</h1>
     <div id="div_cart"></div>
 </div>
 <script id="temp_cart" type="x-handlebars-template">
+    <div class="row">
+        <div class="col ms-2">
+            <input id="all" type="checkbox">
+            <span class="ms-3">전체선택</span>
+        </div>
+        <div class="col text-end">
+            <button class="btn btn-danger btn-sm">선택상품삭제</button>
+        </div>        
+    </div>
+    <hr>    
     <table class="table">
         {{#each .}}
             <tr>
+                <td><input class="chk" type="checkbox"></td>
                 <td>{{bid}}</td>
                 <td><img src="{{image}}" width="50px"></td>
                 <td>{{title}}</td>
@@ -33,6 +51,26 @@
 </script>
 <script>
     getCart();
+
+    //all 체크박스를 클릭한 경우
+    $("#div_cart").on("click", "#all", function(){
+        if($(this).is(":checked")){
+            $("#div_cart .chk").prop("checked", true);
+        }else{
+            $("#div_cart .chk").prop("checked", false);
+        }
+    });
+
+    //각행의 chk 체크박스를 클릭한 경우
+    $("#div_cart").on("click", ".chk", function(){
+        const all=$("#div_cart .chk").length;
+        const chk=$("#div_cart .chk:checked").length;
+        if(all==chk){
+            $("#div_cart #all").prop("checked", true);
+        }else{
+            $("#div_cart #all").prop("checked", false);
+        }
+    });
 
     //변경버튼을 클릭한 경우
     $("#div_cart").on("click", ".btn-update", function(){
