@@ -32,7 +32,7 @@ router.get('/list', function(req, res){
 //장바구니 목록 JSON
 router.get('/list.json', function(req, res){ //localhost:3000/cart/list.json?uid=red
     const uid=req.query.uid;
-    const sql='select * from view_cart where uid=?';
+    const sql='select *, qnt*price as sum, format(qnt*price,0) as fmtsum from view_cart where uid=?';
     db.get().query(sql, [uid], function(err, rows){
         res.send(rows);
     });
@@ -45,6 +45,16 @@ router.post('/delete', function(req, res){
     db.get().query(sql, [cid], function(err){
         res.sendStatus(200);
     });
+});
+
+//수량 변경
+router.post('/update', function(req, res){
+    const cid=req.body.cid;
+    const qnt=req.body.qnt;
+    const sql='update cart set qnt=? where cid=?';
+    db.get().query(sql, [qnt, cid], function(err){
+        res.sendStatus(200);
+    })
 });
 
 module.exports = router;

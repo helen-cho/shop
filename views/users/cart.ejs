@@ -16,14 +16,48 @@
                 <td><img src="{{image}}" width="50px"></td>
                 <td>{{title}}</td>
                 <td>{{fmtprice}}원</td>
-                <td><input value="{{qnt}}" size="3"></td>
+                <td>
+                    <input class="qnt" value="{{qnt}}" size="3" oninput="isNumber(this)">
+                    <button cid="{{cid}}" class="btn-update btn btn-primary btn-sm">변경</button>
+                </td>
+                <td>{{fmtsum}}</td>    
                 <td><i class="bi bi-trash" cid="{{cid}}"></i></td>
             </tr>    
         {{/each}}
     </table>
 </script>
 <script>
+    Handlebars.registerHelper("fmt", function(sum){
+        return sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    });
+</script>
+<script>
     getCart();
+
+    //변경버튼을 클릭한 경우
+    $("#div_cart").on("click", ".btn-update", function(){
+        const cid=$(this).attr("cid");
+        const qnt=$(this).parent().find(".qnt").val();
+        if(qnt=="") {
+            $(this).parent().find(".qnt").val(1);
+            return;
+        }
+        if(confirm(`수량을 ${qnt}권으로 변경하실래요?`)){
+            $.ajax({
+                type:"post",
+                url:"/cart/update",
+                data:{cid, qnt},
+                success:function(){
+                    getCart();
+                }
+            })
+        }
+    });
+
+    //숫자인경우에만 입력
+    function isNumber(item){
+        item.value=item.value.replace(/[^0-9]/g,''); 
+    }
 
     //삭제아이콘을 클릭한 경우
     $("#div_cart").on("click", ".bi-trash", function(){
