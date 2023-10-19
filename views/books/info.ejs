@@ -17,7 +17,7 @@
             <div class="my-3">출판사: <%=book.publisher%></div>
             <div class="my-3">ISBN: <%=book.isbn%></div>
             <hr>
-            <button class="btn btn-warning px-5">장바구니</button>
+            <button id="btn-cart" class="btn btn-warning px-5">장바구니</button>
             <button class="btn btn-success px-5">바로구매</button>
         </div>
     </div>
@@ -44,8 +44,30 @@
 </div>
 <script>
     $("#profile-tab").click();
-    
     getCheck();
+    
+    //장바구니 버튼을 클릭한 경우
+    $("#btn-cart").on("click", function(){
+        if(!sessionStorage.getItem("uid")){
+            sessionStorage.setItem("target", "/books/info?bid=<%=book.bid%>");
+            location.href="/users/login";
+        }else{
+            $.ajax({
+                type:"post",
+                url:"/cart/insert",
+                data:{uid:sessionStorage.getItem("uid"), bid:"<%=book.bid%>"},
+                success:function(data){
+                    if(data==0) {
+                        alert("장바구니에 등록되었습니다.");
+                    }else {
+                        alert("장바구니에 존재하는 상품입니다.");
+                    }
+                    //if(confirm("장바구니로 이용하실래요?")) location.href="/cart/list";
+                }
+            });
+        }
+    });
+
     //빈하트 클릭(추가)
     $("#title").on("click", ".bi-heart", function(){
         if(!sessionStorage.getItem("uid")){
