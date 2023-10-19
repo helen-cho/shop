@@ -24,4 +24,36 @@ router.post('/insert', function(req, res){
     });
 });
 
+//장바구니목록 페이지 이동
+router.get('/list', function(req, res){
+    res.render('index', {title:'장바구니', pageName:'users/cart.ejs'})
+});
+
+//장바구니 목록 JSON
+router.get('/list.json', function(req, res){ //localhost:3000/cart/list.json?uid=red
+    const uid=req.query.uid;
+    const sql='select * from view_cart where uid=?';
+    db.get().query(sql, [uid], function(err, rows){
+        res.send(rows);
+    });
+});
+
+//장바구니 삭제
+router.post('/delete', function(req, res){
+    const cid=req.body.cid;
+    const sql='delete from cart where cid=?';
+    db.get().query(sql, [cid], function(err){
+        res.sendStatus(200);
+    });
+});
+
 module.exports = router;
+
+
+
+
+
+
+
+
+

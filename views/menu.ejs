@@ -29,6 +29,9 @@
             <li class="nav-item" style="display:none;" id="mypage">
                 <a class="nav-link active" aria-current="page" href="/users/mypage">uid</a>
             </li>
+            <li class="nav-item" style="display:none;" id="cart">
+                <a class="nav-link active" aria-current="page" href="/cart/list">장바구니</a>
+            </li>
             <li class="nav-item" style="display:none;" id="logout">
                 <a class="nav-link active" aria-current="page" href="/users/logout">LOGOUT</a>
             </li>
@@ -38,7 +41,7 @@
   </nav>
   <script>
     if(sessionStorage.getItem("uid")){
-        $("#login, #mypage, #logout").toggle();
+        $("#login, #mypage, #logout, #cart").toggle();
         $("#mypage a").html(sessionStorage.getItem("uid"));
     }
 
