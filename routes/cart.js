@@ -13,7 +13,7 @@ router.post('/insert', function(req, res){
         if(count==0){ //장바구니에 없으면
             sql='insert into cart(uid, bid) values(?,?)';
             db.get().query(sql, [uid, bid], function(err){
-                res.send('0')
+                res.send('0');
             });
         }else{ //장바구이에 있으면
             sql='update cart set qnt=qnt+1 where uid=? and bid=?';
@@ -57,6 +57,11 @@ router.post('/update', function(req, res){
     })
 });
 
+router.get('/order', function(req, res){
+    const cid=req.query.cid;
+    console.log('....................', cid);
+    res.sendStatus(200);
+})
 module.exports = router;
 
 

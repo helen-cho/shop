@@ -1,0 +1,11 @@
+<div class="my-5">
+    <h1 class="text-center mb-5">주문하기</h1>
+    <%for(c in cart){%>
+        <div><%=c.title%></div>
+    <%}%>
+</div>
+
+<script>
+    const cart="<%=cart%>";
+    console.log(JSON.parse(cart));
+</script>

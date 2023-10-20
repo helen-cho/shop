@@ -14,6 +14,9 @@
 <div class="my-5">
     <h1 class="text-center mb-5">장바구니</h1>
     <div id="div_cart"></div>
+    <div class="text-center mt-3">
+        <button id="btn-order" class="btn btn-success px-5">주문하기</button>
+    </div>
 </div>
 <script id="temp_cart" type="x-handlebars-template">
     <div class="row">
@@ -30,7 +33,7 @@
         {{#each .}}
             <tr>
                 <td><input cid="{{cid}}" class="chk" type="checkbox"></td>
-                <td>{{bid}}</td>
+                <td>{{cid}}-{{bid}}</td>
                 <td><img src="{{image}}" width="50px"></td>
                 <td>{{title}}</td>
                 <td>{{fmtprice}}원</td>
@@ -56,6 +59,21 @@
 </script>
 <script>
     getCart();
+
+    //주문하기 버튼을 클릭한 경우
+    $("#btn-order").on("click", function(){
+        const cnt=$("#div_cart .chk:checked").length;
+        if(cnt==0){
+            alert("주문할 상품을 선택하세요!");
+        }else{
+            let cart=[];
+            $("#div_cart .chk:checked").each(function(){
+                const cid=$(this).attr("cid");
+                cart.push(cid);
+            });
+            location.href="/order/insert?cart="+ cart.join();
+        }
+    });
 
     //선택상품삭제 버튼을 클릭한 경우
     $("#div_cart").on("click", ".btn-delete", function(){
@@ -142,13 +160,13 @@
             url:"/cart/list.json",
             data:{uid:sessionStorage.getItem("uid")},
             success:function(data){
-                console.log(data);
+                //sconsole.log(data);
                 const temp=Handlebars.compile($("#temp_cart").html());
                 $("#div_cart").html(temp(data));
 
                 let sum=0;
                 data.forEach(item=>{
-                    sum+=parseInt(item.sum);
+                    sum+=item.sum;
                 });
                 $("#sum").html(sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원");
             }

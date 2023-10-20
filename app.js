@@ -24,6 +24,7 @@ app.use('/users', usersRouter);
 app.use('/books', require('./routes/books'));
 app.use('/review', require('./routes/review'));
 app.use('/cart', require('./routes/cart'));
+app.use('/order', require('./routes/order'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
