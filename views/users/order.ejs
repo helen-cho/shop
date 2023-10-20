@@ -1,11 +1,60 @@
 <div class="my-5">
     <h1 class="text-center mb-5">주문하기</h1>
-    <%for(c in cart){%>
-        <div><%=c.title%></div>
-    <%}%>
+    <div id="div_order"></div>
 </div>
-
+<script id="temp_order" type="x-handlebars-template">
+    <table class="table">
+        {{#each order}}
+        <tr>
+            <td><img src="{{image}}" width="30"></td>
+            <td>{{title}}</td>
+            <td>{{fmtprice}}원</td>
+            <td>{{qnt}}</td>
+            <td>{{fmtsum}}원</td>
+        </tr>    
+        {{/each}}
+        <tr class="text-end">
+            <td colspan="5" class="py-3 pe-5">주문총액: <span id="sum">0원</span></td>
+        </tr>    
+    </table>
+    <div class="my-5">
+        <h1 class="text-center mb-5">주문자정보</h1>
+        <div class="input-group mb-3">
+            <span class="input-group-text">주문자명</span>
+            <input class="form-control" value="{{user.uname}}">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">전화번호</span>
+            <input class="form-control" value="{{user.phone}}">
+        </div>    
+        <div class="input-group mb-1">
+            <span class="input-group-text">주소</span>
+            <input class="form-control" value="{{user.address1}}">
+            <button class="btn btn-primary">검색</button>
+        </div>
+        <input class="form-control" value="{{user.address2}}">                 
+    </div>    
+    <div class="text-center mt-3">
+        <button id="btn-order" class="btn btn-success px-5">주문하기</button>
+    </div>
+</script>
 <script>
     const cart="<%=cart%>";
-    console.log(JSON.parse(cart));
+    getOrder();
+    function getOrder(){
+        $.ajax({
+            type:"get",
+            url:"/order/cart.json",
+            data:{cart, uid:sessionStorage.getItem("uid")},
+            success:function(data){
+                const temp=Handlebars.compile($("#temp_order").html());
+                $("#div_order").html(temp(data));
+                let sum=0;
+                data.order.forEach(item=>{
+                    sum += item.sum;
+                });
+                $("#sum").html(sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원");
+            }
+        });
+    }
 </script>
