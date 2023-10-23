@@ -88,4 +88,28 @@ router.get("/book.json", function(req, res){//localhost:3000/order/book.json?pid
     });
 });
 
+//주문관리 페이지
+router.get('/admin', function(req, res){
+    res.render('index', {title:'주문관리', pageName:'order/admin.ejs'});
+});
+
+
+//주문관리.json
+router.get('/admin.json', function(req, res){ //localhost:3000/order/admin.json?page=1
+    const page=req.query.page;
+    const start=(parseInt(page)-1)*3;
+    const sql='select * from view_purchase limit ?,3';
+    db.get().query(sql, [start], function(err, rows){
+        res.send(rows);
+    });
+});
+
+
+//주문갯수
+router.get("/count", function(req, res){ //localhost:3000/order/count
+    const sql='select count(*) as cnt from purchase';
+    db.get().query(sql, function(err, rows){
+        res.send(rows[0].cnt.toString());
+    });
+})
 module.exports = router;

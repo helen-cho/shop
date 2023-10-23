@@ -1,0 +1,78 @@
+<div class="my-5">
+    <h1 class="text-center mb-5">주문관리</h1>
+    <div id="div_purchase"></div>
+    <div id="pagination" class="pagination justify-content-center mt-3"></div>
+</div>
+<script id="temp_purchase" type="x-handlebars-template">
+    <table class="table">
+    {{#each .}}
+        <tr>
+            <td>{{pid}}</td>
+            <td>{{rname}}</td>
+            <td>{{raddress1}}</td>
+            <td>{{phone}}</td>
+            <td>{{fmtsum}}원</td>
+            <td>{{fmtdate}}</td>
+            <td>
+                <!--0:결제대기중 | 1.결제확인 | 2.배송준비중 | 3.배송완료 | 4.주문완료 -->
+                <select class="py-1">
+                    <option value="0" {{status status 0}}>결제대기중</option>
+                    <option value="1" {{status status 1}}>결제확인</option>
+                    <option value="2" {{status status 2}}>배송준비중</option>
+                    <option value="3" {{status status 3}}>배송완료</option>
+                    <option value="4" {{status status 4}}>준문완료</option>
+                </select>
+                <button class="btn btn-danger btn-sm">수정</button>    
+            </td>
+            <td><button class="btn btn-primary btn-sm" pid="{{pid}}">주문상품</button></td>
+        </tr>    
+    {{/each}}
+    </table>
+</script>
+<script>
+    Handlebars.registerHelper("status", function(status, value){
+        if(status==value) return "selected"
+    });
+</script>
+<script>
+    let page=1;
+    getTotal();
+
+    function getPurchase(){
+        $.ajax({
+            type:"get",
+            url:"/order/admin.json",
+            data:{page},
+            success:function(data){
+                const temp=Handlebars.compile($("#temp_purchase").html());
+                $("#div_purchase").html(temp(data));
+            }
+        })
+    }
+
+    function getTotal(){
+        $.ajax({
+            type:"get",
+            url:"/order/count",
+            success:function(data){
+                const totalPages = Math.ceil(data/3);
+                $("#pagination").twbsPagination("changeTotalPages", totalPages, page)
+            }
+        });
+    }
+
+    $('#pagination').twbsPagination({
+        totalPages:10, //총 페이지 번호 수
+        visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
+        startPage : 1, // 시작 시 표시되는 현재 페이지
+        initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
+        first : '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+        prev : '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
+        next : '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
+        last : '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
+        onPageClick: function (event, clickPage) {
+            page=clickPage;
+            getPurchase();
+        }
+    });
+</script>
