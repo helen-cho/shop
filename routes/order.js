@@ -98,7 +98,13 @@ router.get('/admin', function(req, res){
 router.get('/admin.json', function(req, res){ //localhost:3000/order/admin.json?page=1
     const page=req.query.page;
     const start=(parseInt(page)-1)*3;
-    const sql='select * from view_purchase limit ?,3';
+    const status=req.query.status;
+    let sql='';
+    if(status=='100'){ //모든 구매
+        sql='select * from view_purchase limit ?,3';
+    }else{ //status에 해당하는 구매
+        sql=`select * from view_purchase where status=${status} limit ?,3`;
+    }
     db.get().query(sql, [start], function(err, rows){
         res.send(rows);
     });
@@ -107,9 +113,25 @@ router.get('/admin.json', function(req, res){ //localhost:3000/order/admin.json?
 
 //주문갯수
 router.get("/count", function(req, res){ //localhost:3000/order/count
-    const sql='select count(*) as cnt from purchase';
+    let sql='';
+    const status=req.query.status;
+    if(status=='100') {
+        sql='select count(*) as cnt from purchase';
+    }else{
+        sql=`select count(*) as cnt from purchase where status=${status} `;
+    }
     db.get().query(sql, function(err, rows){
         res.send(rows[0].cnt.toString());
     });
-})
+});
+
+//주문상태변경
+router.post("/status/update", function(req, res){
+    const pid=req.body.pid;
+    const status=req.body.status;
+    const sql='update purchase set status=? where pid=?';
+    db.get().query(sql, [status, pid], function(err){
+        res.sendStatus(200);
+    });
+});
 module.exports = router;

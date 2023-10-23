@@ -1,5 +1,18 @@
 <div class="my-5">
     <h1 class="text-center mb-5">주문관리</h1>
+    <div>
+        <select class="py-1" id="status">
+            <option value="100">모든구매</option>
+            <option value="0">결제대기중</option>
+            <option value="1">결제확인</option>
+            <option value="2">배송준비중</option>
+            <option value="3">배송완료</option>
+            <option value="4">주문완료</option>
+        </select>
+        <button id="btn-search" class="btn btn-primary btn-sm">검색</button>
+        <span class="ms-3">검색수: <span id="count">0건</span></span>
+    </div>
+    <hr>
     <div id="div_purchase"></div>
     <div id="pagination" class="pagination justify-content-center mt-3"></div>
 </div>
@@ -13,16 +26,16 @@
             <td>{{phone}}</td>
             <td>{{fmtsum}}원</td>
             <td>{{fmtdate}}</td>
-            <td>
+            <td pid="{{pid}}">
                 <!--0:결제대기중 | 1.결제확인 | 2.배송준비중 | 3.배송완료 | 4.주문완료 -->
-                <select class="py-1">
+                <select class="py-1 status">
                     <option value="0" {{status status 0}}>결제대기중</option>
                     <option value="1" {{status status 1}}>결제확인</option>
                     <option value="2" {{status status 2}}>배송준비중</option>
                     <option value="3" {{status status 3}}>배송완료</option>
                     <option value="4" {{status status 4}}>준문완료</option>
                 </select>
-                <button class="btn btn-danger btn-sm">수정</button>    
+                <button class="btn-update btn btn-danger btn-sm">수정</button>    
             </td>
             <td><button class="btn btn-primary btn-sm" pid="{{pid}}">주문상품</button></td>
         </tr>    
@@ -38,11 +51,33 @@
     let page=1;
     getTotal();
 
+    //검색버튼을 클릭한 경우
+    $("#btn-search").on("click", function(){
+        page=1;
+        getTotal();
+    });
+
+    //수정버튼을 클릭한 경우
+    $("#div_purchase").on("click", ".btn-update", function(){
+        const pid=$(this).parent().attr("pid");
+        const status=$(this).parent().find(".status").val();
+        //alert(pid + ":" + status);
+        $.ajax({
+            type:"post",
+            url:"/order/status/update",
+            data:{pid, status},
+            success:function(){
+                getPurchase();
+                alert("상태가 변경되었습니다!");
+            }
+        })
+    });
+
     function getPurchase(){
         $.ajax({
             type:"get",
             url:"/order/admin.json",
-            data:{page},
+            data:{page, status:$("#status").val()},
             success:function(data){
                 const temp=Handlebars.compile($("#temp_purchase").html());
                 $("#div_purchase").html(temp(data));
@@ -54,9 +89,17 @@
         $.ajax({
             type:"get",
             url:"/order/count",
+            data:{status:$("#status").val()},
             success:function(data){
-                const totalPages = Math.ceil(data/3);
-                $("#pagination").twbsPagination("changeTotalPages", totalPages, page)
+                if(data==0) {
+                    alert("검색된 구매내역이 없습니다!");
+                    $("#status").val("100").attr("selected", "selected");
+                    $("#btn-search").click();
+                }else{
+                    $("#count").html(data);
+                    const totalPages = Math.ceil(data/3);
+                    $("#pagination").twbsPagination("changeTotalPages", totalPages, page);
+                }
             }
         });
     }
