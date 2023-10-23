@@ -12,13 +12,13 @@
             <li class="nav-item" id="order" style="display:none;">
                 <a class="nav-link active" aria-current="page" href="/order">주문목록</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" id="search" style="display:none;">
                 <a class="nav-link active" aria-current="page" href="/books">도서검색</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" id="users" style="display:none;">
                 <a class="nav-link active" aria-current="page" href="/users">사용자목록</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" id="books" style="display:none;">
                 <a class="nav-link active" aria-current="page" href="/books/list">도서목록</a>
             </li>
             <li class="nav-item">
@@ -43,8 +43,13 @@
     </div>
   </nav>
   <script>
-    if(sessionStorage.getItem("uid")){
+    if(sessionStorage.getItem("uid") && sessionStorage.getItem("uid") != "admin"){ //일반사용자 로그인
         $("#login, #mypage, #logout, #cart, #order").toggle();
+        $("#mypage a").html(sessionStorage.getItem("uid"));
+    }
+
+    if(sessionStorage.getItem("uid") && sessionStorage.getItem("uid") == "admin"){ //관리자가 로그인
+        $("#login, #mypage, #logout, #search, #books, #users").toggle();
         $("#mypage a").html(sessionStorage.getItem("uid"));
     }
 
