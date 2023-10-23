@@ -1,3 +1,33 @@
 <div class="my-5">
     <h1 class="text-center mb-5">주문목록</h1>
+    <div id="div_purchase"></div>
 </div>
+<script id="temp_purchase" type="x-handlebars-template">
+    <table class="table">
+    {{#each .}}
+        <tr>
+            <td>{{pid}}</td>
+            <td>{{rname}}</td>
+            <td>{{raddress1}}</td>
+            <td>{{phone}}</td>
+            <td>{{fmtsum}}원</td>
+            <td>{{fmtdate}}</td>
+            <td><button class="btn btn-primary btn-sm">주문상품</button></td>
+        </tr>    
+    {{/each}}
+    </table>
+</script>
+<script>
+    getPurchase();
+    function getPurchase(){
+        $.ajax({
+            type:"get",
+            url:"/order/list.json",
+            data:{uid:sessionStorage.getItem("uid")},
+            success:function(data){
+                const temp=Handlebars.compile($("#temp_purchase").html());
+                $("#div_purchase").html(temp(data));
+            }
+        })
+    }
+</script>
