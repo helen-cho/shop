@@ -1,6 +1,7 @@
 <div class="my-5">
     <h1 class="text-center mb-5">주문목록</h1>
     <div id="div_purchase"></div>
+    <div id="div_orders"></div>
 </div>
 <script id="temp_purchase" type="x-handlebars-template">
     <table class="table">
@@ -12,13 +13,71 @@
             <td>{{phone}}</td>
             <td>{{fmtsum}}원</td>
             <td>{{fmtdate}}</td>
-            <td><button class="btn btn-primary btn-sm">주문상품</button></td>
+            <td>{{status status}}</td>
+            <td><button class="btn btn-primary btn-sm" pid="{{pid}}">주문상품</button></td>
+        </tr>    
+    {{/each}}
+    </table>
+</script>
+<script id="temp_orders" type="x-handlebars-template">
+    <div class="mt-5">
+        <h1 class="text-center mb-5">주문정보</h1>
+        <!--0:결제대기중 | 1.결제확인 | 2.배송준비중 | 3.배송완료 | 4.주문완료 -->
+        <div>
+            주문번호: {{info.pid}}  
+            <span style="color:red" class="ms-5">{{status info.status}}</span>
+        </div>
+        <div>받은이 :{{info.rname}} {{info.raddress1}} {{info.raddress2}}</div>
+        <div>전화: {{info.rphone}}</div>
+        <div>결재금액: {{info.fmtsum}}원</div>
+    </div>
+    <hr>
+    <table class="table">
+    {{#each books}}
+        <tr>
+            <td>{{bid}}</td>
+            <td><img src="{{image}}" width="30"></td>
+            <td>{{title}}</td>
+            <td>{{qnt}}</td>
+            <td>{{fmtprice}}원</td>
+            <td>{{fmtsum}}원</td>
         </tr>    
     {{/each}}
     </table>
 </script>
 <script>
+    Handlebars.registerHelper("status", function(status){
+        if(status==0){
+            return "결제대기중";
+        }else if(status==1){
+            return "결제확인";
+        }else if(status==2){
+            return "배송준비중";
+        }else if(status==3){
+            return "배송완료";
+        }else if(status==4){
+            return "주문완료";
+        }
+    });
+</script>
+<script>
     getPurchase();
+
+    //주문상품버튼을 클릭한 경우
+    $("#div_purchase").on("click", "button", function(){
+        const pid=$(this).attr("pid");
+        //alert(pid);
+        $.ajax({
+            type:"get",
+            url:"/order/book.json",
+            data:{pid},
+            success:function(data){
+                const temp=Handlebars.compile($("#temp_orders").html());
+                $("#div_orders").html(temp(data));
+            }
+        });
+    });
+
     function getPurchase(){
         $.ajax({
             type:"get",

@@ -75,4 +75,17 @@ router.get('/list.json', function(req, res){ //localhost:3000/order/list.json?ui
     });
 });
 
+//주문상품목록.json
+router.get("/book.json", function(req, res){//localhost:3000/order/book.json?pid=15
+    const pid=req.query.pid;
+    let sql='select * from view_orders where pid=?';
+    db.get().query(sql, [pid], function(err, rows){
+        const books=rows;
+        sql='select * from view_purchase where pid=?';
+        db.get().query(sql, [pid], function(err, rows){
+            res.send({books, info:rows[0]});
+        });
+    });
+});
+
 module.exports = router;
