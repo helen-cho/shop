@@ -1,0 +1,57 @@
+<!-- Modal -->
+<div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">상품목록</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="div_orders"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+<script id="temp_orders" type="x-handlebars-template">
+    <div>
+        <!--0:결제대기중 | 1.결제확인 | 2.배송준비중 | 3.배송완료 | 4.주문완료 -->
+        <div>
+            주문번호: {{info.pid}}  
+            <span style="color:red" class="ms-5">{{status1 info.status}}</span>
+        </div>
+        <div>받은이 :{{info.rname}} {{info.raddress1}} {{info.raddress2}}</div>
+        <div>전화: {{info.rphone}}</div>
+        <div>결재금액: {{info.fmtsum}}원</div>
+    </div>
+    <hr>
+    <table class="table">
+    {{#each books}}
+        <tr>
+            <td>{{bid}}</td>
+            <td><img src="{{image}}" width="30"></td>
+            <td>{{title}}</td>
+            <td>{{qnt}}</td>
+            <td>{{fmtprice}}원</td>
+            <td>{{fmtsum}}원</td>
+        </tr>    
+    {{/each}}
+    </table>
+</script>
+<script>
+    Handlebars.registerHelper("status1", function(status){
+        if(status==0){
+            return "결제대기중";
+        }else if(status==1){
+            return "결제확인";
+        }else if(status==2){
+            return "배송준비중";
+        }else if(status==3){
+            return "배송완료";
+        }else if(status==4){
+            return "주문완료";
+        }
+    });
+</script>

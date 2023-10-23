@@ -15,6 +15,7 @@
     <hr>
     <div id="div_purchase"></div>
     <div id="pagination" class="pagination justify-content-center mt-3"></div>
+    <%-include("modal.ejs")%>
 </div>
 <script id="temp_purchase" type="x-handlebars-template">
     <table class="table">
@@ -37,7 +38,7 @@
                 </select>
                 <button class="btn-update btn btn-danger btn-sm">수정</button>    
             </td>
-            <td><button class="btn btn-primary btn-sm" pid="{{pid}}">주문상품</button></td>
+            <td><button class="btn-modal btn btn-primary btn-sm" pid="{{pid}}">주문상품</button></td>
         </tr>    
     {{/each}}
     </table>
@@ -50,6 +51,23 @@
 <script>
     let page=1;
     getTotal();
+
+    //주문상품버튼을 클릭한 경우
+    $("#div_purchase").on("click", ".btn-modal", function(){
+        const pid=$(this).attr("pid");
+        $.ajax({
+            type:"get",
+            url:"/order/book.json",
+            data:{pid},
+            success:function(data){
+                console.log(data);
+                const temp=Handlebars.compile($("#temp_orders").html());
+                $("#div_orders").html(temp(data));
+                $("#modal").modal("show");
+            }
+        });
+       
+    });
 
     //검색버튼을 클릭한 경우
     $("#btn-search").on("click", function(){
@@ -67,7 +85,8 @@
             url:"/order/status/update",
             data:{pid, status},
             success:function(){
-                getPurchase();
+                page=1;
+                getTotal();
                 alert("상태가 변경되었습니다!");
             }
         })
@@ -93,7 +112,7 @@
             success:function(data){
                 if(data==0) {
                     alert("검색된 구매내역이 없습니다!");
-                    $("#status").val("100").attr("selected", "selected");
+                    $("#status").val("100").attr("selected", true);
                     $("#btn-search").click();
                 }else{
                     $("#count").html(data);
