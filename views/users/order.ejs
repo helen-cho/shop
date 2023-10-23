@@ -9,7 +9,7 @@
 <script id="temp_order" type="x-handlebars-template">
     <table class="table">
         {{#each order}}
-        <tr>
+        <tr class="book" book="{{toString @this}}">
             <td><img src="{{image}}" width="30"></td>
             <td>{{title}}</td>
             <td>{{fmtprice}}원</td>
@@ -37,8 +37,13 @@
             <button class="btn btn-primary">검색</button>
         </div>
         <input id="raddress2" class="form-control" value="{{user.address2}}"> 
-        <input id="sum1">                
+        <input id="sum1" type="hidden">                
     </div>    
+</script>
+<script>
+    Handlebars.registerHelper("toString", function(book){
+        return JSON.stringify(book);
+    });
 </script>
 <script>
     const cart="<%=cart%>";
@@ -60,6 +65,17 @@
                 success:function(pid){
                     alert(pid);
                     //주문상품등록
+                    $("#div_order .book").each(async function(){
+                        const book=JSON.parse($(this).attr("book"));
+                        console.log(book);
+                        await $.ajax({
+                            type:"post",
+                            url:"/order/book/insert",
+                            data:{...book, pid}
+                        });
+                    });
+                    alert("주문이 완료되었습니다!");
+                    location.href="/";
                 }
             });
         }

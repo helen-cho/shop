@@ -30,15 +30,48 @@ router.post("/purchase/insert", function(req, res){
     const raddress1=req.body.raddress1;
     const raddress2=req.body.raddress2;
     const sum=req.body.sum;
-    console.log(uid, rname, rphone, raddress1, raddress2, sum);
+    //console.log(uid, rname, rphone, raddress1, raddress2, sum);
     let sql='insert into purchase(uid,rname,rphone,raddress1,raddress2,sum) values(?,?,?,?,?,?)';
     db.get().query(sql,[uid,rname,rphone,raddress1,raddress2,sum], function(err){
-        console.log('.............err1', err);
+        //console.log('.............err1', err);
         sql='select last_insert_id() last';
         db.get().query(sql, function(err, rows){
-            console.log('.................err2', err);
+            //console.log('.................err2', err);
             res.send(rows[0].last.toString());
         });
+    });
+});
+
+
+//주문상품등록
+router.post('/book/insert', function(req, res){
+    const pid=req.body.pid;
+    const bid=req.body.bid;
+    const qnt=req.body.qnt;
+    const price=req.body.price;
+    const cid=req.body.cid;
+    //console.log(pid, bid, qnt, price, cid);
+    let sql='insert into orders(pid,bid,qnt,price) values(?,?,?,?)';
+    db.get().query(sql,[pid,bid,qnt,price],function(err){
+        if(err) console.log('주문상품등록오류:', err);
+        sql='delete from cart where cid=?';
+        db.get().query(sql, [cid], function(err){
+            res.sendStatus(200);
+        });
+    });
+});
+
+//주문목록 페이지이동
+router.get('/', function(req, res){
+    res.render('index', {title:'주문목록', pageName:'order/list.ejs'})
+});
+
+//주문목록.json
+router.get('/list.json', function(req, res){ //localhost:3000/order/list.json?uid=blue
+    const uid=req.query.uid;
+    const sql='select * from view_purchase where uid=?';
+    db.get().query(sql, [uid], function(err, rows){
+        res.send(rows);
     });
 });
 
